@@ -37,6 +37,10 @@ Public Class frm_pos_sell
         Public Property Quantity As Decimal
         Public Property Price As Decimal
         Public Property NetPrice As Decimal
+        Public Property TotalKHR As String
+        Public Property TotalTHB As String
+        Public Property TotalPaid As String
+        Public Property Totalqty As String
     End Class
 
     ' --- 1. Window Management (Moving the borderless form) ---
@@ -661,13 +665,37 @@ Public Class frm_pos_sell
         If v_DisplayForm IsNot Nothing AndAlso Not v_DisplayForm.IsDisposed Then
             Dim currentItems As List(Of DisplayItemInfo) = GetCurrentItemsForDisplay()
 
-            ' 1. Read the Paid Amount from frm_pos_sell's txtPaid
-            Dim paidAmount As Decimal = 0D
-            ' NOTE: txtPaid.Text includes the total paid amount (in USD format)
-            Decimal.TryParse(txtPaid.Text, paidAmount)
+            ' 1. Read the Net Total Due from the main form
+            Dim netTotalDue As Decimal = 0D
+            Decimal.TryParse(txtNetTotal.Text, netTotalDue) ' <--- THIS IS THE AMOUNT YOU WANT TO DISPLAY
 
-            ' 2. Call the updated method, passing both the item list AND the paid amount
-            v_DisplayForm.UpdateDisplayItems(currentItems, paidAmount)
+            Dim totalyqty As Decimal = 0D
+            Decimal.TryParse(txtQuantity.Text, totalyqty)
+            ' The original paidAmount variable is no longer necessary if you want NetTotal.
+            ' However, we should still calculate the actual paid amount to show the difference.
+            Dim actualPaidAmount As Decimal = 0D
+            Decimal.TryParse(txtPaid.Text.Replace(" USD", ""), actualPaidAmount)
+
+            ' 2. Read KHR and THB totals from the main form's summary labels
+            Dim khrTotal As String = lblAmtKHR.Text
+            Dim thbTotal As String = lblAmtTHB.Text
+
+            ' NOTE: The variable below is redundant but was in your original code.
+            ' Dim totalpaid As String = txtNetTotal.Text 
+
+            ' 3. If there are items, attach the currency totals and the NET TOTAL (as TotalPaid) 
+            ' to the first item for easy passing to the secondary display.
+            If currentItems.Count > 0 Then
+                currentItems(0).TotalKHR = khrTotal
+                currentItems(0).TotalTHB = thbTotal
+                ' ⭐ REVISED: Store the numeric Net Total Due (in USD) in the TotalPaid property.
+                currentItems(0).TotalPaid = netTotalDue.ToString("N2")
+                currentItems(0).Totalqty = totalyqty.ToString("N2")
+            End If
+
+            ' 4. Call the updated method on the display form
+            ' ⭐ REVISED: Pass the Net Total Due (decimal) instead of the actual Paid Amount.
+            v_DisplayForm.UpdateDisplayItems(currentItems, netTotalDue)
         End If
     End Sub
 

@@ -342,5 +342,14 @@
   <ItemGroup>
     <None Include="Resources\Positron_Logo_White.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pi.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PositronLogo1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Positron_Logo_White1.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>
