@@ -164,6 +164,12 @@
     <Compile Include="Find\frm_item_master.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="frm_display_second.Designer.vb">
+      <DependentUpon>frm_display_second.vb</DependentUpon>
+    </Compile>
+    <None Include="frm_display_second.vb">
+      <SubType>Form</SubType>
+    </None>
     <Compile Include="frm_dl_list.Designer.vb">
       <DependentUpon>frm_dl_list.vb</DependentUpon>
     </Compile>
@@ -264,6 +270,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Find\frm_item_master.resx">
       <DependentUpon>frm_item_master.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frm_display_second.resx">
+      <DependentUpon>frm_display_second.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frm_dl_list.resx">
       <DependentUpon>frm_dl_list.vb</DependentUpon>

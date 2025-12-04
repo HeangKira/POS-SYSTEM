@@ -1,5 +1,6 @@
 ﻿Imports System.Data
 Imports System.Drawing
+Imports System.Drawing.Printing
 Imports System.Net.Http
 Imports System.Runtime.InteropServices
 Imports System.Security.Cryptography.X509Certificates
@@ -15,9 +16,13 @@ Public Class frm_pos_sell
     ' --- 0. Control Variables ---
     Private isCalculatingDiscount As Boolean = False
     Private v_LastPaymentCurrency As String = "USD" ' Tracks the currency of the last payment added
-    Private v_LastPaymentRate As Decimal = 1D        ' Tracks the rate of the last payment added (e.g., 4100 for KHR)
+    Private v_LastPaymentRate As Decimal = 1D          ' Tracks the rate of the last payment added (e.g., 4100 for KHR)
     Private v_DeliveryId As Integer = 0 ' ⭐ CORRECTED: Private variable to hold the delivery ID ⭐
     Private v_DeliveryDate As Date = Date.Today ' Private variable to hold the delivery date
+
+    ' ⭐ ADDED: Variable to hold the instance of the second display form ⭐
+    Private v_DisplayForm As frm_display_second
+
 
     ' ⭐ NEW: Public Sub to receive data from frm_dl_list ⭐
     Public Sub SetDeliveryInfo(ByVal deliveryId As Integer, ByVal deliveryName As String)
@@ -25,6 +30,14 @@ Public Class frm_pos_sell
         lblDelivery.Text = deliveryName
         v_DeliveryDate = Date.Today ' Use current date as the default delivery date
     End Sub
+
+    Public Class DisplayItemInfo
+        Public Property ItemCode As String
+        Public Property Description As String
+        Public Property Quantity As Decimal
+        Public Property Price As Decimal
+        Public Property NetPrice As Decimal
+    End Class
 
     ' --- 1. Window Management (Moving the borderless form) ---
     <DllImport("user32.DLL", EntryPoint:="ReleaseCapture")>
@@ -48,9 +61,17 @@ Public Class frm_pos_sell
         End If
     End Sub
     Private Sub btn_Exit_Click(sender As Object, e As EventArgs) Handles btn_Exit.Click
+        ' Close the secondary display form when the main form closes
+        If v_DisplayForm IsNot Nothing AndAlso Not v_DisplayForm.IsDisposed Then
+            v_DisplayForm.Close()
+        End If
         Me.Close()
     End Sub
     Private Sub btnLogout_Click(sender As Object, e As EventArgs) Handles btnLogout.Click
+        ' Close the secondary display form when logging out/exiting
+        If v_DisplayForm IsNot Nothing AndAlso Not v_DisplayForm.IsDisposed Then
+            v_DisplayForm.Close()
+        End If
         Application.Exit()
     End Sub
 
@@ -89,6 +110,9 @@ Public Class frm_pos_sell
         txtVat.ReadOnly = True
         txtVat.BackColor = System.Drawing.SystemColors.Control
 
+        lblCasheri.Text = "Sovat"
+        lblStroe.Text = "Positron Store"
+
         UpdateTotalSummary()
         SumPaymentAmounts()
 
@@ -96,6 +120,47 @@ Public Class frm_pos_sell
         lblDelivery.Text = "N/A"
         v_DeliveryId = 0 ' Reset ID
         v_DeliveryDate = Date.Today
+
+        ' -------------------------
+        ' ⭐ Secondary Display Logic (frm_display_second) ⭐
+        ' -------------------------
+        Try
+            Dim screens As Screen() = Screen.AllScreens
+            If screens.Length > 1 Then
+                Dim screenBounds As Rectangle = screens(1).Bounds
+
+                ' ⭐ REVISED: Create a NEW instance and store it in the private variable ⭐
+                v_DisplayForm = New frm_display_second()
+
+                v_DisplayForm.Location = New Point(screenBounds.X + (screenBounds.Width - v_DisplayForm.Width) \ 2, screenBounds.Y + (screenBounds.Height - v_DisplayForm.Height) \ 2)
+                v_DisplayForm.FormBorderStyle = FormBorderStyle.None
+                v_DisplayForm.Show() ' Use Show, not ShowDialog
+
+            Else
+                ' If only one screen, still create the form but don't position it on the second screen
+                v_DisplayForm = New frm_display_second()
+                ' You might want to hide it or show it on the main screen for debugging
+                ' v_DisplayForm.Show() 
+            End If
+        Catch ex As Exception
+            MessageBox.Show("Error initializing secondary display: " & ex.Message, V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
+
+        ' -------------------------
+        ' -------------------------
+
+        Try
+            Dim screens As Screen() = Screen.AllScreens
+            If screens.Length > 1 Then
+                Dim screenBounds As Rectangle = screens(0).Bounds
+                Me.Location = New Point(screenBounds.X + (screenBounds.Width - Me.Width) \ 2, screenBounds.Y + (screenBounds.Height - Me.Height) \ 2)
+                Me.FormBorderStyle = FormBorderStyle.None
+                Me.Show()
+            End If
+        Catch ex As Exception
+            MessageBox.Show(ex.Message, V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
+            'WriteError(ex.Message)
+        End Try
     End Sub
 
     Private Sub PaymentConfrim()
@@ -496,6 +561,9 @@ Public Class frm_pos_sell
                             UpdateTotalSummary()
                         End If
                 End Select
+
+                ' ⭐ ADDED: Update the secondary display after item modification or removal ⭐
+                UpdateSecondaryDisplay()
             End If
             txt_Barcode.Clear()
             txt_Barcode.Focus()
@@ -556,6 +624,53 @@ Public Class frm_pos_sell
         txt_Barcode.Clear()
         txt_Barcode.Focus()
     End Sub
+
+    ' ⭐ NEW: Helper to extract DataGridView content for the display form ⭐
+    ' ⭐ REVISED: Helper to extract DataGridView content for the display form ⭐
+    Private Function GetCurrentItemsForDisplay() As List(Of DisplayItemInfo)
+        Dim itemList As New List(Of DisplayItemInfo)()
+
+        For Each row As DataGridViewRow In dg_Items.Rows
+            If row.IsNewRow Then Continue For
+
+            Dim itemCode As String = If(row.Cells("i_ITEMNO").Value IsNot Nothing, row.Cells("i_ITEMNO").Value.ToString(), "") ' << ADDED
+            Dim description As String = If(row.Cells("i_DESC").Value IsNot Nothing, row.Cells("i_DESC").Value.ToString(), "")
+            Dim qty As Decimal = 0D
+            Dim price As Decimal = 0D  ' << ADDED
+            Dim netAmt As Decimal = 0D
+
+            Decimal.TryParse(If(row.Cells("i_Qty").Value IsNot Nothing, row.Cells("i_Qty").Value.ToString(), "0"), qty)
+            Decimal.TryParse(If(row.Cells("i_Price").Value IsNot Nothing, row.Cells("i_Price").Value.ToString(), "0"), price) ' << ADDED
+            Decimal.TryParse(If(row.Cells("i_NetAmt").Value IsNot Nothing, row.Cells("i_NetAmt").Value.ToString(), "0"), netAmt)
+
+            Dim itemInfo As New DisplayItemInfo With {
+                .ItemCode = itemCode,     ' << ADDED
+                .Description = description,
+                .Quantity = qty,
+                .Price = price,           ' << ADDED
+                .NetPrice = netAmt
+            }
+            itemList.Add(itemInfo)
+        Next
+
+        Return itemList
+    End Function
+
+    ' ⭐ NEW: Method to update the secondary display form ⭐
+    Private Sub UpdateSecondaryDisplay()
+        If v_DisplayForm IsNot Nothing AndAlso Not v_DisplayForm.IsDisposed Then
+            Dim currentItems As List(Of DisplayItemInfo) = GetCurrentItemsForDisplay()
+
+            ' 1. Read the Paid Amount from frm_pos_sell's txtPaid
+            Dim paidAmount As Decimal = 0D
+            ' NOTE: txtPaid.Text includes the total paid amount (in USD format)
+            Decimal.TryParse(txtPaid.Text, paidAmount)
+
+            ' 2. Call the updated method, passing both the item list AND the paid amount
+            v_DisplayForm.UpdateDisplayItems(currentItems, paidAmount)
+        End If
+    End Sub
+
 
     ' ---------------------------------------------------------------------
     ' --- 7. Summary Panel Calculations (NET TOTAL DUE) ---
@@ -639,6 +754,9 @@ Public Class frm_pos_sell
 
         ' ⭐️ IMPORTANT: Call SumPaymentAmounts to ensure Paid and Change are updated
         SumPaymentAmounts()
+
+        ' ⭐ ADDED: Update the secondary display form after summary recalculation ⭐
+        UpdateSecondaryDisplay()
 
         Return finalNetTotal
     End Function
@@ -1021,6 +1139,9 @@ Public Class frm_pos_sell
                 UpdateTotalSummary()
                 SumPaymentAmounts()
 
+                ' ⭐ ADDED: Clear secondary display
+                UpdateSecondaryDisplay()
+
                 ' 5. Focus on the barcode field for the next transaction
                 txt_Barcode.Focus()
 
@@ -1057,6 +1178,7 @@ Public Class frm_pos_sell
 
         ' 2. Update Payment Summary using the actual total received (in USD)
         UpdatePaymentSummary(totalPaymentReceived)
+        UpdateSecondaryDisplay()
     End Sub
 
     ' *** FIX 1: Modified UpdatePaymentSummary to include currency code next to change amount ***
@@ -1080,7 +1202,7 @@ Public Class frm_pos_sell
         Else
             ' Shortage (rawChange < 0D).
             paidAmountToDisplay = totalPaymentReceived ' Paid Display shows the actual received amount (USD)
-            rawChangeUSD = 0D                      ' Change is 0.00
+            rawChangeUSD = 0D                     ' Change is 0.00
         End If
 
         ' 4. Update txtPaid (Always in USD format)
@@ -1093,14 +1215,14 @@ Public Class frm_pos_sell
                 Case "KHR"
                     Dim changeKHR As Decimal = rawChangeUSD * v_LastPaymentRate
                     ' Display KHR without decimals, using N0 format
-                    changeDisplayText = changeKHR.ToString("N0") & "KHR"
+                    changeDisplayText = changeKHR.ToString("N0") & " KHR" ' Added space for clarity
                 Case "THB"
                     Dim changeTHB As Decimal = rawChangeUSD * v_LastPaymentRate
                     ' Display THB without decimals, using N0 format
-                    changeDisplayText = changeTHB.ToString("N0") & "THB"
+                    changeDisplayText = changeTHB.ToString("N0") & " THB" ' Added space for clarity
                 Case Else ' "USD" or anything else
                     ' USD is the base currency, use standard format
-                    changeDisplayText = rawChangeUSD.ToString(v_FormatNo) & "USD"
+                    changeDisplayText = rawChangeUSD.ToString(v_FormatNo) & " USD" ' Added space for clarity
             End Select
         Else
             ' No change, display 0.00 in USD format
@@ -1134,14 +1256,12 @@ Public Class frm_pos_sell
         Decimal.TryParse(txtNetTotal.Text, totalDue)
 
         Dim paidAmt As Decimal = 0D
-        ' ORIGINAL: Decimal.TryParse(txtPaid.Text.Replace(" USD", ""), paidAmt) 
         ' CORRECTED: Use TryParse directly on the numeric string from UpdatePaymentSummary
         If Not Decimal.TryParse(txtPaid.Text, paidAmt) Then
             MessageBox.Show("Error parsing Paid Amount.", V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub
         End If
 
-        ' NOTE: This check should be based on totalPaymentReceived (which updates txtPaid), but we use the text field for simplicity.
         If paidAmt < totalDue Then
             MessageBox.Show("Payment is incomplete. Please receive the full amount.", V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Exit Sub
@@ -1322,7 +1442,7 @@ Public Class frm_pos_sell
                 Dim finalReceiptNo As String = successJson("receipt_no").ToString() ' ⭐ CAPTURE FINAL UNIQUE NUMBER ⭐
 
                 MessageBox.Show($"Transaction {finalReceiptNo} posted successfully via API! ✅", V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Information)
-
+                PrintReceiptExecute(finalReceiptNo)
                 ' Clear the UI for the next transaction
                 btnClear_Click(Nothing, EventArgs.Empty)
             Else
@@ -1749,11 +1869,6 @@ Public Class frm_pos_sell
     End Sub
 
     Private Sub btnCOD_Click(sender As Object, e As EventArgs) Handles btnCOD.Click
-        'Dim F As New frm_dl_list()
-        'F.FormBorderStyle = FormBorderStyle.None
-        '' ⭐ MODIFIED: Pass a reference of the current form to the delivery list form ⭐
-        'F.ParentFormSell = Me
-        'F.ShowDialog()
         Try
             Dim F As New frm_dl_list
             F.FormBorderStyle = FormBorderStyle.None
@@ -1796,7 +1911,239 @@ Public Class frm_pos_sell
         End Try
     End Sub
 
-    Private Sub lblDelivery_Click(sender As Object, e As EventArgs) Handles lblDelivery.Click
+    ' ======================================================================
+    ' --- 15. Global Variables for Printing ---
+    ' ======================================================================
+    Private WithEvents PrintDocument1 As New System.Drawing.Printing.PrintDocument
+    Private PrintPreviewDialog1 As New System.Windows.Forms.PrintPreviewDialog
+    ' Store the content string so the PrintPage event can access it
+    Private v_ReceiptContentToPrint As String = ""
 
+    ' ======================================================================
+    ' --- 16. Print Document Event Handler (Drawing the Receipt) - REVISED FONT & MARGINS ---
+    ' ======================================================================
+
+    Private Sub PrintDocument1_PrintPage(sender As Object, e As System.Drawing.Printing.PrintPageEventArgs) Handles PrintDocument1.PrintPage
+
+        ' --- Configuration ---
+        Dim leftMargin As Single = 1
+
+        ' ⭐ 2. DYNAMIC LOGO PATH (Updated to use Application.StartupPath and correct file name) ⭐
+        ' This assumes PositronLogo.png is in the same folder as the application's executable (.exe)
+        Dim logoPath As String = Application.StartupPath & "\" & "CompanyLogo.png"
+
+        Dim yPosition As Single = e.MarginBounds.Top
+        ' --- 1. Draw Logo Dynamically ---
+        Try
+            Using logoImage As Image = Image.FromFile(logoPath)
+
+                ' Define the logo's width and height on the receipt paper
+                Dim targetWidth As Integer = 150 ' Typical width for an 80mm printer
+                ' Calculate height to maintain aspect ratio
+                Dim targetHeight As Integer = CInt((logoImage.Height / logoImage.Width) * targetWidth)
+
+                ' Calculate X position to center the logo within the print area (approx 250px wide)
+                Dim printAreaWidth As Single = 250.0F
+                Dim centerOffset As Single = (printAreaWidth - targetWidth) / 2.0F
+                Dim xPosition As Single = leftMargin + centerOffset
+
+                ' Draw the logo
+                e.Graphics.DrawImage(logoImage, xPosition, yPosition, targetWidth, targetHeight)
+
+                ' Update Y position for the next text line
+                yPosition += targetHeight
+            End Using
+        Catch ex As Exception
+            ' Handle missing/invalid logo: Draw a placeholder text
+            ' Note: If this text prints, the file path is still incorrect or the file is locked/invalid.
+            Dim errorFont As New Font("Arial", 10)
+            e.Graphics.DrawString("[LOGO MISSING/ERROR]", errorFont, Brushes.Red, leftMargin, yPosition)
+            yPosition += errorFont.GetHeight(e.Graphics) * 1.5F ' Add space for the placeholder
+        End Try
+
+        ' --- 2. Add Space and Text Content ---
+        ' Add a little space after the logo/placeholder
+        yPosition += 5.0F
+
+        ' Text Content Setup
+        Dim font As New Font("Courier New", 8, FontStyle.Regular)
+        Dim brush As New SolidBrush(Color.Black)
+        Dim lineHeight As Single = font.GetHeight(e.Graphics) * 1.1F
+
+        ' Split the receipt text content (assuming v_ReceiptContentToPrint is accessible)
+        Dim lines() As String = v_ReceiptContentToPrint.Split(New String() {vbCrLf}, StringSplitOptions.None)
+
+        ' Draw each line of the receipt content (text)
+        For Each line As String In lines
+            ' All text starts at the adjusted leftMargin
+            e.Graphics.DrawString(line, font, brush, leftMargin, yPosition)
+            yPosition += lineHeight
+        Next
+
+        e.HasMorePages = False
+    End Sub
+    ' ======================================================================
+    ' --- 17. Receipt Generation Logic (Formatting Data) - REVISED FOR 40 CHARS ---
+    ' ======================================================================
+
+    Private Function GenerateReceiptContent(ByVal receiptNo As String) As String
+        Dim receiptLines As New System.Text.StringBuilder()
+
+        ' ⭐ FIX: Set fixed character width to 40 for optimal and safe fit on 80mm paper. ⭐
+        Const TOTAL_WIDTH As Integer = 40
+        Const DASH_LINE As String = "----------------------------------------" ' 40 dashes
+        Const EQUAL_LINE As String = "========================================" ' 40 equals
+
+        ' Helper function to center a string based on TOTAL_WIDTH
+        Dim CenterLine = Function(text As String) As String
+                             Dim padding As Integer = (TOTAL_WIDTH - text.Length) / 2
+                             If padding < 0 Then padding = 0
+                             Return New String(" "c, padding) & text
+                         End Function
+
+        ' --- Header Section ---
+        receiptLines.AppendLine()
+        receiptLines.AppendLine(CenterLine(V_StoreName))
+        receiptLines.AppendLine(CenterLine("Store ID: " & V_StoreId))
+        receiptLines.AppendLine(CenterLine("Tel: 020-386-****"))
+        receiptLines.AppendLine(DASH_LINE)
+
+        receiptLines.AppendLine(String.Format("RECEIPT NO: {0}", receiptNo))
+        receiptLines.AppendLine(String.Format("DATE: {0}", DateTime.Now.ToString("yyyy-MM-dd HH:mm")))
+        receiptLines.AppendLine(String.Format("CASHIER: {0}", V_CashierName))
+
+        If v_DeliveryId > 0 Then
+            receiptLines.AppendLine(String.Format("DELIVERY: {0}", lblDelivery.Text))
+        End If
+
+        receiptLines.AppendLine(EQUAL_LINE)
+
+        ' --- Detail Section Header (Total width: 40 characters) ---
+        ' Breakdown: Description (20) + Qty (5) + Unit Price (15) = 40
+        receiptLines.AppendLine(String.Format("{0,-20}{1,5}{2,15}", "ITEM DESCRIPTION", "QTY", "AMOUNT"))
+        receiptLines.AppendLine(DASH_LINE)
+
+        ' --- Detail Line Items ---
+        Dim totalItemsInTransaction As Integer = 0
+
+        For Each row As DataGridViewRow In dg_Items.Rows
+            If row.IsNewRow Then Continue For
+            totalItemsInTransaction += 1
+
+            Dim itemName As String = row.Cells("i_DESC").Value.ToString().Trim()
+            Dim qty As Decimal = CDec(row.Cells("i_Qty").Value)
+            Dim unitPrice As Decimal = CDec(row.Cells("i_Price").Value)
+            Dim netAmt As Decimal = CDec(row.Cells("i_NetAmt").Value)
+            Dim lineDisAmt As Decimal = CDec(row.Cells("i_DisAmt").Value)
+
+            ' Line 1: Item Name (Truncated) and Net Amount
+            Dim displayItemName As String = itemName
+            If displayItemName.Length > 20 Then displayItemName = displayItemName.Substring(0, 20)
+
+            ' Format: [Item Name] [Blank Space] [Net Amount]
+            receiptLines.AppendLine(String.Format("{0,-20}  {1,18:0.00}", displayItemName, netAmt))
+
+            ' Line 2: QTY and Unit Price (Detailed breakdown for price accuracy)
+            ' Format: [  @ Unit Price] [x QTY] [Blank Space]
+            receiptLines.AppendLine(String.Format("{0,-20} x{1,5:0.00} @ {2,10:0.00}", "", qty, unitPrice))
+
+            If lineDisAmt > 0D Then
+                ' Discount line: [  - Discount Label] [Discount Amount]
+                receiptLines.AppendLine(String.Format("{0,-25} {1,15:0.00}", "  - Line Discount:", -lineDisAmt))
+            End If
+        Next
+
+        receiptLines.AppendLine(DASH_LINE)
+
+        ' --- Summary Section (Total width: 40 characters) ---
+        ' Label (25) + Value (15) = 40
+
+        Dim subTotalNet As Decimal = 0D : Decimal.TryParse(txtSubTotal.Text, subTotalNet)
+        Dim checkDiscountAmt As Decimal = 0D : Decimal.TryParse(txtCheckDiscountAmt.Text, checkDiscountAmt)
+        Dim vatAmt As Decimal = 0D : Decimal.TryParse(txtVat.Text, vatAmt)
+        Dim shippingFee As Decimal = 0D : Decimal.TryParse(txtShippingFee.Text, shippingFee)
+        Dim grandTotal As Decimal = 0D : Decimal.TryParse(txtNetTotal.Text, grandTotal)
+        Dim changeText As String = txtChange.Text
+
+        receiptLines.AppendLine(String.Format("Total Items: {0}", totalItemsInTransaction))
+        receiptLines.AppendLine(DASH_LINE)
+
+        ' Subtotal, Fees, and Tax
+        receiptLines.AppendLine(String.Format("{0,-25} {1,15:0.00}", "SUBTOTAL (Net):", subTotalNet))
+
+        If checkDiscountAmt > 0D Then
+            receiptLines.AppendLine(String.Format("{0,-25} {1,15:0.00}", "CHECK DISCOUNT:", -checkDiscountAmt))
+        End If
+
+        If shippingFee > 0D Then
+            receiptLines.AppendLine(String.Format("{0,-25} {1,15:0.00}", "SHIPPING FEE:", shippingFee))
+        End If
+
+        If vatAmt > 0D Then
+            receiptLines.AppendLine(String.Format("{0,-25} {1,15:0.00}", "VAT/TAX AMOUNT:", vatAmt))
+        End If
+
+        receiptLines.AppendLine(EQUAL_LINE)
+
+        ' Emphasis on Grand Total
+        receiptLines.AppendLine(String.Format("{0,-25} {1,15}", "**GRAND TOTAL (USD):**", Format(grandTotal, "0.00")))
+
+        receiptLines.AppendLine(DASH_LINE)
+
+        ' --- Payment Method Section ---
+        receiptLines.AppendLine(CenterLine("PAYMENT RECEIVED"))
+
+        For Each pmtRow As DataGridViewRow In dg_Payment.Rows
+            If pmtRow.IsNewRow Then Continue For
+            Dim method As String = pmtRow.Cells("PAY_METHOD").Value.ToString()
+            Dim recAmtLocal As Decimal = CDec(pmtRow.Cells("REC_AMT").Value)
+            Dim curCode As String = pmtRow.Cells("CURRENCY").Value.ToString()
+
+            Dim paymentLabel As String = method & " (" & curCode & "):"
+            If paymentLabel.Length > 25 Then paymentLabel = paymentLabel.Substring(0, 25)
+
+            ' Format: [Method + Currency, 25 chars] [Amount, 15 chars]
+            receiptLines.AppendLine(String.Format(" - {0,-25} {1,13:0.00}", paymentLabel, recAmtLocal))
+        Next
+
+        receiptLines.AppendLine(DASH_LINE)
+
+        ' Change line - Use the formatted text from the UI
+        receiptLines.AppendLine(String.Format("{0,-25} {1,15}", "**CHANGE:**", changeText))
+
+        receiptLines.AppendLine(EQUAL_LINE)
+
+        ' --- Footer Section ---
+        receiptLines.AppendLine()
+        receiptLines.AppendLine(CenterLine("THANK YOU FOR YOUR PURCHASE!"))
+        receiptLines.AppendLine(CenterLine("Please come again."))
+        receiptLines.AppendLine(DASH_LINE)
+        receiptLines.AppendLine()
+        receiptLines.AppendLine()
+
+        Return receiptLines.ToString()
+    End Function
+    ' ======================================================================
+    ' --- 18. Print/Preview Execution Handler ---
+    ' This forces the Print Preview dialog to show. The actual printing 
+    ' must be triggered by the user from within the dialog.
+    ' ======================================================================
+
+    Private Sub PrintReceiptExecute(ByVal receiptNo As String)
+        ' 1. Generate Content
+        v_ReceiptContentToPrint = GenerateReceiptContent(receiptNo)
+
+        Try
+            ' 2. Assign Document and Set Title
+            PrintPreviewDialog1.Document = PrintDocument1
+            PrintPreviewDialog1.Text = "Receipt Preview: " & receiptNo
+
+            ' 3. Show the Preview Dialog
+            ' Execution pauses here until the user closes the dialog.
+            PrintPreviewDialog1.ShowDialog()
+
+        Catch ex As Exception
+            MessageBox.Show("Error preparing receipt print/preview: " & ex.Message, V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
     End Sub
 End Class
