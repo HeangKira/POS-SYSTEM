@@ -22,17 +22,19 @@ Partial Class frm_pos_sell
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle6 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle2 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle3 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle4 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle5 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle7 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle9 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle8 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle10 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle15 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle11 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle12 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle13 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle14 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle16 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle18 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle17 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Me.Panel_TitleBar = New System.Windows.Forms.Panel()
+        Me.lblStroe = New System.Windows.Forms.Label()
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
+        Me.lblCasheri = New System.Windows.Forms.Label()
         Me.btnLogout = New FontAwesome.Sharp.IconButton()
         Me.btnSetting = New FontAwesome.Sharp.IconButton()
         Me.btnSell = New FontAwesome.Sharp.IconButton()
@@ -51,6 +53,7 @@ Partial Class frm_pos_sell
         Me.i_DisAmt = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.i_NetAmt = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.Panel1 = New System.Windows.Forms.Panel()
+        Me.btnSaveDraft = New FontAwesome.Sharp.IconButton()
         Me.btnClostingReport = New FontAwesome.Sharp.IconButton()
         Me.btnDriver = New FontAwesome.Sharp.IconButton()
         Me.btnVoide = New FontAwesome.Sharp.IconButton()
@@ -115,8 +118,6 @@ Partial Class frm_pos_sell
         Me.txtShippingFee = New System.Windows.Forms.TextBox()
         Me.Label38 = New System.Windows.Forms.Label()
         Me.txtVat = New System.Windows.Forms.TextBox()
-        Me.lblCasheri = New System.Windows.Forms.Label()
-        Me.lblStroe = New System.Windows.Forms.Label()
         Me.Panel_TitleBar.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dg_Items, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -131,7 +132,9 @@ Partial Class frm_pos_sell
         'Panel_TitleBar
         '
         Me.Panel_TitleBar.BackColor = System.Drawing.Color.FromArgb(CType(CType(15, Byte), Integer), CType(CType(24, Byte), Integer), CType(CType(27, Byte), Integer))
+        Me.Panel_TitleBar.Controls.Add(Me.lblStroe)
         Me.Panel_TitleBar.Controls.Add(Me.PictureBox1)
+        Me.Panel_TitleBar.Controls.Add(Me.lblCasheri)
         Me.Panel_TitleBar.Controls.Add(Me.btnLogout)
         Me.Panel_TitleBar.Controls.Add(Me.btnSetting)
         Me.Panel_TitleBar.Controls.Add(Me.btnSell)
@@ -144,6 +147,17 @@ Partial Class frm_pos_sell
         Me.Panel_TitleBar.Size = New System.Drawing.Size(1008, 56)
         Me.Panel_TitleBar.TabIndex = 5
         '
+        'lblStroe
+        '
+        Me.lblStroe.AutoSize = True
+        Me.lblStroe.Font = New System.Drawing.Font("Microsoft Tai Le", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblStroe.ForeColor = System.Drawing.Color.White
+        Me.lblStroe.Location = New System.Drawing.Point(617, 34)
+        Me.lblStroe.Name = "lblStroe"
+        Me.lblStroe.Size = New System.Drawing.Size(38, 16)
+        Me.lblStroe.TabIndex = 187
+        Me.lblStroe.Text = "Store"
+        '
         'PictureBox1
         '
         Me.PictureBox1.BackColor = System.Drawing.Color.Transparent
@@ -154,6 +168,17 @@ Partial Class frm_pos_sell
         Me.PictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
         Me.PictureBox1.TabIndex = 30
         Me.PictureBox1.TabStop = False
+        '
+        'lblCasheri
+        '
+        Me.lblCasheri.AutoSize = True
+        Me.lblCasheri.Font = New System.Drawing.Font("Microsoft Tai Le", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblCasheri.ForeColor = System.Drawing.Color.White
+        Me.lblCasheri.Location = New System.Drawing.Point(614, 9)
+        Me.lblCasheri.Name = "lblCasheri"
+        Me.lblCasheri.Size = New System.Drawing.Size(50, 16)
+        Me.lblCasheri.TabIndex = 186
+        Me.lblCasheri.Text = "Casheir "
         '
         'btnLogout
         '
@@ -185,7 +210,7 @@ Partial Class frm_pos_sell
         Me.btnSetting.IconColor = System.Drawing.Color.White
         Me.btnSetting.IconFont = FontAwesome.Sharp.IconFont.[Auto]
         Me.btnSetting.IconSize = 27
-        Me.btnSetting.Location = New System.Drawing.Point(774, 3)
+        Me.btnSetting.Location = New System.Drawing.Point(387, 3)
         Me.btnSetting.Name = "btnSetting"
         Me.btnSetting.Size = New System.Drawing.Size(90, 50)
         Me.btnSetting.TabIndex = 28
@@ -295,25 +320,25 @@ Partial Class frm_pos_sell
         Me.dg_Items.BackgroundColor = System.Drawing.SystemColors.Control
         Me.dg_Items.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
         Me.dg_Items.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
-        DataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(CType(CType(44, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(65, Byte), Integer))
-        DataGridViewCellStyle1.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.Window
-        DataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(60, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(79, Byte), Integer))
-        DataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText
-        DataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.dg_Items.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
+        DataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle10.BackColor = System.Drawing.Color.FromArgb(CType(CType(44, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(65, Byte), Integer))
+        DataGridViewCellStyle10.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.Window
+        DataGridViewCellStyle10.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(60, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(79, Byte), Integer))
+        DataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.dg_Items.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle10
         Me.dg_Items.ColumnHeadersHeight = 45
         Me.dg_Items.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing
         Me.dg_Items.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.i_Line, Me.i_ITEMNO, Me.i_DESC, Me.i_Qty, Me.i_Price, Me.i_Uom, Me.i_DisPct, Me.i_DisAmt, Me.i_NetAmt})
-        DataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Window
-        DataGridViewCellStyle6.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.ControlText
-        DataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Window
-        DataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.ControlText
-        DataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
-        Me.dg_Items.DefaultCellStyle = DataGridViewCellStyle6
+        DataGridViewCellStyle15.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle15.BackColor = System.Drawing.SystemColors.Window
+        DataGridViewCellStyle15.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle15.ForeColor = System.Drawing.SystemColors.ControlText
+        DataGridViewCellStyle15.SelectionBackColor = System.Drawing.SystemColors.Window
+        DataGridViewCellStyle15.SelectionForeColor = System.Drawing.SystemColors.ControlText
+        DataGridViewCellStyle15.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.dg_Items.DefaultCellStyle = DataGridViewCellStyle15
         Me.dg_Items.EnableHeadersVisualStyles = False
         Me.dg_Items.GridColor = System.Drawing.SystemColors.Control
         Me.dg_Items.Location = New System.Drawing.Point(0, 129)
@@ -329,8 +354,8 @@ Partial Class frm_pos_sell
         '
         'i_Line
         '
-        DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter
-        Me.i_Line.DefaultCellStyle = DataGridViewCellStyle2
+        DataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter
+        Me.i_Line.DefaultCellStyle = DataGridViewCellStyle11
         Me.i_Line.HeaderText = "Line"
         Me.i_Line.MinimumWidth = 40
         Me.i_Line.Name = "i_Line"
@@ -355,12 +380,12 @@ Partial Class frm_pos_sell
         '
         'i_Qty
         '
-        DataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight
-        DataGridViewCellStyle3.Font = New System.Drawing.Font("Times New Roman", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle3.Padding = New System.Windows.Forms.Padding(0, 0, 5, 0)
-        DataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.LightBlue
-        DataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.Black
-        Me.i_Qty.DefaultCellStyle = DataGridViewCellStyle3
+        DataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight
+        DataGridViewCellStyle12.Font = New System.Drawing.Font("Times New Roman", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle12.Padding = New System.Windows.Forms.Padding(0, 0, 5, 0)
+        DataGridViewCellStyle12.SelectionBackColor = System.Drawing.Color.LightBlue
+        DataGridViewCellStyle12.SelectionForeColor = System.Drawing.Color.Black
+        Me.i_Qty.DefaultCellStyle = DataGridViewCellStyle12
         Me.i_Qty.HeaderText = "Quantity"
         Me.i_Qty.MinimumWidth = 60
         Me.i_Qty.Name = "i_Qty"
@@ -369,12 +394,12 @@ Partial Class frm_pos_sell
         '
         'i_Price
         '
-        DataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight
-        DataGridViewCellStyle4.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle4.Format = "N2"
-        DataGridViewCellStyle4.NullValue = "0"
-        DataGridViewCellStyle4.Padding = New System.Windows.Forms.Padding(0, 0, 5, 0)
-        Me.i_Price.DefaultCellStyle = DataGridViewCellStyle4
+        DataGridViewCellStyle13.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight
+        DataGridViewCellStyle13.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle13.Format = "N2"
+        DataGridViewCellStyle13.NullValue = "0"
+        DataGridViewCellStyle13.Padding = New System.Windows.Forms.Padding(0, 0, 5, 0)
+        Me.i_Price.DefaultCellStyle = DataGridViewCellStyle13
         Me.i_Price.HeaderText = "Price"
         Me.i_Price.MinimumWidth = 60
         Me.i_Price.Name = "i_Price"
@@ -392,12 +417,12 @@ Partial Class frm_pos_sell
         '
         'i_DisPct
         '
-        DataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight
-        DataGridViewCellStyle5.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle5.Format = "N2"
-        DataGridViewCellStyle5.NullValue = "0"
-        DataGridViewCellStyle5.Padding = New System.Windows.Forms.Padding(0, 0, 5, 0)
-        Me.i_DisPct.DefaultCellStyle = DataGridViewCellStyle5
+        DataGridViewCellStyle14.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight
+        DataGridViewCellStyle14.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle14.Format = "N2"
+        DataGridViewCellStyle14.NullValue = "0"
+        DataGridViewCellStyle14.Padding = New System.Windows.Forms.Padding(0, 0, 5, 0)
+        Me.i_DisPct.DefaultCellStyle = DataGridViewCellStyle14
         Me.i_DisPct.HeaderText = "Discount (%)"
         Me.i_DisPct.MinimumWidth = 85
         Me.i_DisPct.Name = "i_DisPct"
@@ -418,6 +443,7 @@ Partial Class frm_pos_sell
         'Panel1
         '
         Me.Panel1.BackColor = System.Drawing.Color.FromArgb(CType(CType(215, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(217, Byte), Integer))
+        Me.Panel1.Controls.Add(Me.btnSaveDraft)
         Me.Panel1.Controls.Add(Me.btnClostingReport)
         Me.Panel1.Controls.Add(Me.btnDriver)
         Me.Panel1.Controls.Add(Me.btnVoide)
@@ -426,6 +452,26 @@ Partial Class frm_pos_sell
         Me.Panel1.Name = "Panel1"
         Me.Panel1.Size = New System.Drawing.Size(788, 63)
         Me.Panel1.TabIndex = 6
+        '
+        'btnSaveDraft
+        '
+        Me.btnSaveDraft.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btnSaveDraft.BackColor = System.Drawing.Color.FromArgb(CType(CType(242, Byte), Integer), CType(CType(237, Byte), Integer), CType(CType(229, Byte), Integer))
+        Me.btnSaveDraft.FlatAppearance.BorderSize = 0
+        Me.btnSaveDraft.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnSaveDraft.Font = New System.Drawing.Font("Calibri", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btnSaveDraft.ForeColor = System.Drawing.Color.Black
+        Me.btnSaveDraft.IconChar = FontAwesome.Sharp.IconChar.FileText
+        Me.btnSaveDraft.IconColor = System.Drawing.Color.Black
+        Me.btnSaveDraft.IconFont = FontAwesome.Sharp.IconFont.[Auto]
+        Me.btnSaveDraft.IconSize = 25
+        Me.btnSaveDraft.Location = New System.Drawing.Point(235, 6)
+        Me.btnSaveDraft.Name = "btnSaveDraft"
+        Me.btnSaveDraft.Size = New System.Drawing.Size(101, 51)
+        Me.btnSaveDraft.TabIndex = 36
+        Me.btnSaveDraft.Text = "Save Draft"
+        Me.btnSaveDraft.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText
+        Me.btnSaveDraft.UseVisualStyleBackColor = False
         '
         'btnClostingReport
         '
@@ -439,7 +485,7 @@ Partial Class frm_pos_sell
         Me.btnClostingReport.IconColor = System.Drawing.Color.Black
         Me.btnClostingReport.IconFont = FontAwesome.Sharp.IconFont.[Auto]
         Me.btnClostingReport.IconSize = 25
-        Me.btnClostingReport.Location = New System.Drawing.Point(236, 6)
+        Me.btnClostingReport.Location = New System.Drawing.Point(351, 6)
         Me.btnClostingReport.Name = "btnClostingReport"
         Me.btnClostingReport.Size = New System.Drawing.Size(101, 51)
         Me.btnClostingReport.TabIndex = 35
@@ -519,8 +565,6 @@ Partial Class frm_pos_sell
         'Panel2
         '
         Me.Panel2.BackColor = System.Drawing.Color.FromArgb(CType(CType(225, Byte), Integer), CType(CType(221, Byte), Integer), CType(CType(234, Byte), Integer))
-        Me.Panel2.Controls.Add(Me.lblStroe)
-        Me.Panel2.Controls.Add(Me.lblCasheri)
         Me.Panel2.Controls.Add(Me.txtTHBRate)
         Me.Panel2.Controls.Add(Me.Label15)
         Me.Panel2.Controls.Add(Me.txtKHRRate)
@@ -1154,25 +1198,25 @@ Partial Class frm_pos_sell
         Me.dg_Payment.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.dg_Payment.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None
         Me.dg_Payment.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
-        DataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control
-        DataGridViewCellStyle7.Font = New System.Drawing.Font("Microsoft Tai Le", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText
-        DataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Control
-        DataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.WindowText
-        DataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.dg_Payment.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle7
+        DataGridViewCellStyle16.BackColor = System.Drawing.SystemColors.Control
+        DataGridViewCellStyle16.Font = New System.Drawing.Font("Microsoft Tai Le", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle16.ForeColor = System.Drawing.SystemColors.WindowText
+        DataGridViewCellStyle16.SelectionBackColor = System.Drawing.SystemColors.Control
+        DataGridViewCellStyle16.SelectionForeColor = System.Drawing.SystemColors.WindowText
+        DataGridViewCellStyle16.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.dg_Payment.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle16
         Me.dg_Payment.ColumnHeadersHeight = 20
         Me.dg_Payment.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing
         Me.dg_Payment.ColumnHeadersVisible = False
         Me.dg_Payment.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.PAY_METHOD, Me.BANK, Me.REC_AMT})
-        DataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control
-        DataGridViewCellStyle9.Font = New System.Drawing.Font("Microsoft Tai Le", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.ControlText
-        DataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Control
-        DataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.WindowText
-        DataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
-        Me.dg_Payment.DefaultCellStyle = DataGridViewCellStyle9
+        DataGridViewCellStyle18.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle18.BackColor = System.Drawing.SystemColors.Control
+        DataGridViewCellStyle18.Font = New System.Drawing.Font("Microsoft Tai Le", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle18.ForeColor = System.Drawing.SystemColors.ControlText
+        DataGridViewCellStyle18.SelectionBackColor = System.Drawing.SystemColors.Control
+        DataGridViewCellStyle18.SelectionForeColor = System.Drawing.SystemColors.WindowText
+        DataGridViewCellStyle18.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.dg_Payment.DefaultCellStyle = DataGridViewCellStyle18
         Me.dg_Payment.GridColor = System.Drawing.SystemColors.Control
         Me.dg_Payment.Location = New System.Drawing.Point(301, 32)
         Me.dg_Payment.Name = "dg_Payment"
@@ -1186,8 +1230,8 @@ Partial Class frm_pos_sell
         'PAY_METHOD
         '
         Me.PAY_METHOD.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill
-        DataGridViewCellStyle8.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.PAY_METHOD.DefaultCellStyle = DataGridViewCellStyle8
+        DataGridViewCellStyle17.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.PAY_METHOD.DefaultCellStyle = DataGridViewCellStyle17
         Me.PAY_METHOD.HeaderText = "Payment Method"
         Me.PAY_METHOD.Name = "PAY_METHOD"
         Me.PAY_METHOD.ReadOnly = True
@@ -1379,26 +1423,6 @@ Partial Class frm_pos_sell
         Me.txtVat.Text = "0.00"
         Me.txtVat.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
         '
-        'lblCasheri
-        '
-        Me.lblCasheri.AutoSize = True
-        Me.lblCasheri.Font = New System.Drawing.Font("Microsoft Tai Le", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblCasheri.Location = New System.Drawing.Point(499, 10)
-        Me.lblCasheri.Name = "lblCasheri"
-        Me.lblCasheri.Size = New System.Drawing.Size(50, 16)
-        Me.lblCasheri.TabIndex = 186
-        Me.lblCasheri.Text = "Casheir "
-        '
-        'lblStroe
-        '
-        Me.lblStroe.AutoSize = True
-        Me.lblStroe.Font = New System.Drawing.Font("Microsoft Tai Le", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblStroe.Location = New System.Drawing.Point(500, 39)
-        Me.lblStroe.Name = "lblStroe"
-        Me.lblStroe.Size = New System.Drawing.Size(38, 16)
-        Me.lblStroe.TabIndex = 187
-        Me.lblStroe.Text = "Store"
-        '
         'frm_pos_sell
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -1413,6 +1437,7 @@ Partial Class frm_pos_sell
         Me.Name = "frm_pos_sell"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Panel_TitleBar.ResumeLayout(False)
+        Me.Panel_TitleBar.PerformLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dg_Items, System.ComponentModel.ISupportInitialize).EndInit()
         Me.Panel1.ResumeLayout(False)
@@ -1500,9 +1525,6 @@ Partial Class frm_pos_sell
     Friend WithEvents Label11 As Label
     Friend WithEvents Label12 As Label
     Friend WithEvents cbNonVat As CheckBox
-    Friend WithEvents PAY_METHOD As DataGridViewTextBoxColumn
-    Friend WithEvents BANK As DataGridViewTextBoxColumn
-    Friend WithEvents REC_AMT As DataGridViewTextBoxColumn
     Friend WithEvents Label14 As Label
     Friend WithEvents txtKHRRate As TextBox
     Friend WithEvents txtTHBRate As TextBox
@@ -1514,4 +1536,8 @@ Partial Class frm_pos_sell
     Friend WithEvents lblDelivery As Label
     Friend WithEvents lblStroe As Label
     Friend WithEvents lblCasheri As Label
+    Friend WithEvents btnSaveDraft As FontAwesome.Sharp.IconButton
+    Friend WithEvents PAY_METHOD As DataGridViewTextBoxColumn
+    Friend WithEvents BANK As DataGridViewTextBoxColumn
+    Friend WithEvents REC_AMT As DataGridViewTextBoxColumn
 End Class

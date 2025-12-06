@@ -63,6 +63,36 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized resource of type System.Drawing.Bitmap.
         '''</summary>
+        Friend ReadOnly Property _50Off() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("50Off", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property istockphoto_1442509090_612x612() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("istockphoto-1442509090-612x612", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property Off_50_() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("Off-50%", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
         Friend ReadOnly Property pi() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("pi", resourceCulture)
@@ -86,6 +116,16 @@ Namespace My.Resources
         Friend ReadOnly Property Positron_Logo_White1() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("Positron_Logo_White1", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property Positron_Logo_White2() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("Positron_Logo_White2", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
             End Get
         End Property

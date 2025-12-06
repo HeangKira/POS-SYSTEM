@@ -158,6 +158,12 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClosingReports\frm_reports_mgt.Designer.vb">
+      <DependentUpon>frm_reports_mgt.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ClosingReports\frm_reports_mgt.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Find\frm_item_master.Designer.vb">
       <DependentUpon>frm_item_master.vb</DependentUpon>
     </Compile>
@@ -174,6 +180,12 @@
       <DependentUpon>frm_dl_list.vb</DependentUpon>
     </Compile>
     <Compile Include="frm_dl_list.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frm_login.Designer.vb">
+      <DependentUpon>frm_login.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frm_login.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="frm_main_pos.vb">
@@ -268,6 +280,9 @@
     <Compile Include="Setting\PostgreSQLConnection.vb" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ClosingReports\frm_reports_mgt.resx">
+      <DependentUpon>frm_reports_mgt.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Find\frm_item_master.resx">
       <DependentUpon>frm_item_master.vb</DependentUpon>
     </EmbeddedResource>
@@ -276,6 +291,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frm_dl_list.resx">
       <DependentUpon>frm_dl_list.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frm_login.resx">
+      <DependentUpon>frm_login.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frm_main_pos.resx">
       <DependentUpon>frm_main_pos.vb</DependentUpon>
@@ -350,6 +368,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Positron_Logo_White1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Off-50%25.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\50Off.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\istockphoto-1442509090-612x612.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Positron_Logo_White2.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>

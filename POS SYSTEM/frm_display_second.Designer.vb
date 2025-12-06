@@ -26,6 +26,8 @@ Partial Class frm_display_second
     Friend WithEvents Label7 As Label
     Friend WithEvents TableLayoutPanel1 As TableLayoutPanel
     Friend WithEvents PictureBox1 As PictureBox
+    Friend WithEvents PictureBox2 As PictureBox
+    Friend WithEvents PictureBox3 As PictureBox
 
     'Required by the Windows Form Designer
     Private components As System.ComponentModel.IContainer
@@ -36,7 +38,6 @@ Partial Class frm_display_second
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.Panel1 = New System.Windows.Forms.Panel()
-        Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.lblTitle = New System.Windows.Forms.Label()
         Me.dgtDisplayDataPosMani = New System.Windows.Forms.DataGridView()
         Me.lblPaid = New System.Windows.Forms.Label()
@@ -47,10 +48,16 @@ Partial Class frm_display_second
         Me.Panel2 = New System.Windows.Forms.Panel()
         Me.Label7 = New System.Windows.Forms.Label()
         Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel()
+        Me.PictureBox3 = New System.Windows.Forms.PictureBox()
+        Me.PictureBox2 = New System.Windows.Forms.PictureBox()
+        Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.Panel1.SuspendLayout()
-        CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dgtDisplayDataPosMani, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Panel2.SuspendLayout()
+        Me.TableLayoutPanel1.SuspendLayout()
+        CType(Me.PictureBox3, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.PictureBox2, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Panel1
@@ -62,16 +69,6 @@ Partial Class frm_display_second
         Me.Panel1.Name = "Panel1"
         Me.Panel1.Size = New System.Drawing.Size(800, 50)
         Me.Panel1.TabIndex = 0
-        '
-        'PictureBox1
-        '
-        Me.PictureBox1.Image = Global.POS_SYSTEM.My.Resources.Resources.Positron_Logo_White1
-        Me.PictureBox1.Location = New System.Drawing.Point(697, 3)
-        Me.PictureBox1.Name = "PictureBox1"
-        Me.PictureBox1.Size = New System.Drawing.Size(100, 44)
-        Me.PictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
-        Me.PictureBox1.TabIndex = 1
-        Me.PictureBox1.TabStop = False
         '
         'lblTitle
         '
@@ -103,7 +100,7 @@ Partial Class frm_display_second
         Me.lblPaid.AutoSize = True
         Me.lblPaid.Font = New System.Drawing.Font("Microsoft Sans Serif", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblPaid.ForeColor = System.Drawing.Color.White
-        Me.lblPaid.Location = New System.Drawing.Point(227, 82)
+        Me.lblPaid.Location = New System.Drawing.Point(203, 82)
         Me.lblPaid.Name = "lblPaid"
         Me.lblPaid.Size = New System.Drawing.Size(38, 24)
         Me.lblPaid.TabIndex = 54
@@ -125,7 +122,7 @@ Partial Class frm_display_second
         Me.lblBard.AutoSize = True
         Me.lblBard.Font = New System.Drawing.Font("Microsoft Sans Serif", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblBard.ForeColor = System.Drawing.Color.White
-        Me.lblBard.Location = New System.Drawing.Point(414, 82)
+        Me.lblBard.Location = New System.Drawing.Point(370, 82)
         Me.lblBard.Name = "lblBard"
         Me.lblBard.Size = New System.Drawing.Size(40, 24)
         Me.lblBard.TabIndex = 56
@@ -186,6 +183,8 @@ Partial Class frm_display_second
         Me.TableLayoutPanel1.ColumnCount = 1
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
         Me.TableLayoutPanel1.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
+        Me.TableLayoutPanel1.Controls.Add(Me.PictureBox3, 0, 1)
+        Me.TableLayoutPanel1.Controls.Add(Me.PictureBox2, 0, 0)
         Me.TableLayoutPanel1.Location = New System.Drawing.Point(505, 56)
         Me.TableLayoutPanel1.Name = "TableLayoutPanel1"
         Me.TableLayoutPanel1.RowCount = 2
@@ -193,6 +192,36 @@ Partial Class frm_display_second
         Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
         Me.TableLayoutPanel1.Size = New System.Drawing.Size(292, 393)
         Me.TableLayoutPanel1.TabIndex = 2
+        '
+        'PictureBox3
+        '
+        Me.PictureBox3.Image = Global.POS_SYSTEM.My.Resources.Resources.istockphoto_1442509090_612x612
+        Me.PictureBox3.Location = New System.Drawing.Point(3, 199)
+        Me.PictureBox3.Name = "PictureBox3"
+        Me.PictureBox3.Size = New System.Drawing.Size(286, 190)
+        Me.PictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
+        Me.PictureBox3.TabIndex = 4
+        Me.PictureBox3.TabStop = False
+        '
+        'PictureBox2
+        '
+        Me.PictureBox2.Image = Global.POS_SYSTEM.My.Resources.Resources.Off_50_
+        Me.PictureBox2.Location = New System.Drawing.Point(3, 3)
+        Me.PictureBox2.Name = "PictureBox2"
+        Me.PictureBox2.Size = New System.Drawing.Size(286, 190)
+        Me.PictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
+        Me.PictureBox2.TabIndex = 3
+        Me.PictureBox2.TabStop = False
+        '
+        'PictureBox1
+        '
+        Me.PictureBox1.Image = Global.POS_SYSTEM.My.Resources.Resources.Positron_Logo_White1
+        Me.PictureBox1.Location = New System.Drawing.Point(697, 3)
+        Me.PictureBox1.Name = "PictureBox1"
+        Me.PictureBox1.Size = New System.Drawing.Size(100, 44)
+        Me.PictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
+        Me.PictureBox1.TabIndex = 1
+        Me.PictureBox1.TabStop = False
         '
         'frm_display_second
         '
@@ -208,10 +237,13 @@ Partial Class frm_display_second
         Me.Text = "frm_display_second"
         Me.Panel1.ResumeLayout(False)
         Me.Panel1.PerformLayout()
-        CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dgtDisplayDataPosMani, System.ComponentModel.ISupportInitialize).EndInit()
         Me.Panel2.ResumeLayout(False)
         Me.Panel2.PerformLayout()
+        Me.TableLayoutPanel1.ResumeLayout(False)
+        CType(Me.PictureBox3, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.PictureBox2, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub

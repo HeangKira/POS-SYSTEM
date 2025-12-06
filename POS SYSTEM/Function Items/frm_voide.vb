@@ -11,7 +11,30 @@ Public Class frm_voide
     Private Const API_BASE_URL As String = "http://localhost:5005" ' Match API base URL
     Private ReadOnly httpClient As New HttpClient()
     Private Const V_ProjectName As String = "POS System"
-    Private Const V_VoidUser As String = "ADMIN" ' ⭐ Ensure this is replaced with the actual logged-in user ID ⭐
+
+    ' Variable to hold the actual user performing the void (set by frm_pos_sell)
+    Private _voidingUserName As String = "UNKNOWN_USER" ' Changed default to UNKNOWN_USER
+
+    Public Property VoidingUserName() As String
+        Get
+            Return _voidingUserName
+        End Get
+        Set(value As String)
+            _voidingUserName = value
+        End Set
+    End Property
+
+    ' ⭐ FIX: PUBLIC SUB TO RECEIVE THE LOGGED-IN USER NAME ⭐
+    ''' <summary>
+    ''' Sets the user ID who is performing the void operation, called by the parent form.
+    ''' </summary>
+    Public Sub SetVoidingUser(ByVal userName As String)
+        If Not String.IsNullOrEmpty(userName) Then
+            Me.VoidingUserName = userName
+        Else
+            Me.VoidingUserName = "UNKNOWN_USER" ' Safety fallback
+        End If
+    End Sub
 
     ' Assuming dgtDeliveryList control exists on the form.
     ' Assuming Panel_TitleBar, btn_Minimize, btn_Maximize, btn_Exit, btnClose controls exist.
@@ -207,42 +230,6 @@ Public Class frm_voide
     ' ---------------------------------------------------------------------
     ' --- Cell Click Handler (Initiate Void and Popup Reason) ---
     ' ---------------------------------------------------------------------
-    'Private Async Sub dgtDeliveryList_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgtDeliveryList.CellContentClick
-    '    If e.RowIndex < 0 OrElse e.ColumnIndex < 0 Then Exit Sub
-
-    '    If dgtDeliveryList.Columns(e.ColumnIndex).Name = "VoidButton" Then
-    '        Dim row As DataGridViewRow = dgtDeliveryList.Rows(e.RowIndex)
-    '        Dim receiptNo As String = row.Cells("ReceiptNumber").Value.ToString()
-    '        Dim currentStatus As String = row.Cells("StatusInvoice").Value.ToString()
-
-    '        If currentStatus = "Inactive" Then
-    '            MessageBox.Show("This receipt is already voided.", V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Information)
-    '            Exit Sub
-    '        End If
-
-    '        ' ⭐ STEP 1: Show the Void Reason popup form (You must have frm_void_reason defined) ⭐
-    '        ' Dim frmReason As New frm_void_reason() 
-
-    '        ' Temporarily substitute frm_void_reason with InputBox if the form is not shared
-    '        ' You must uncomment the line above and ensure frm_void_reason exists and has a .VoidReason property 
-    '        ' and returns DialogResult.OK on submit.
-    '        Dim voidReason As String = InputBox("Enter reason for voiding receipt: " & receiptNo, V_ProjectName & " - Void Reason", "")
-
-    '        If String.IsNullOrWhiteSpace(voidReason) Then
-    '            MessageBox.Show("Void reason cannot be empty.", V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Warning)
-    '            Exit Sub
-    '        End If
-
-    '        ' If frmReason.ShowDialog() = DialogResult.OK Then ' Use this with the custom form
-
-    '        If MessageBox.Show($"Confirm void for receipt {receiptNo} with reason: {voidReason}?", V_ProjectName, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) = DialogResult.Yes Then
-
-    '            ' ⭐ STEP 2: Pass the receipt number and the reason ⭐
-    '            Await VoidSelectedReceipt(receiptNo, voidReason)
-    '        End If
-    '        ' End If ' Use this with the custom form
-    '    End If
-    'End Sub
     Private Async Sub dgtDeliveryList_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgtDeliveryList.CellContentClick
         If e.RowIndex < 0 OrElse e.ColumnIndex < 0 Then Exit Sub
 
@@ -251,12 +238,13 @@ Public Class frm_voide
             Dim receiptNo As String = row.Cells("ReceiptNumber").Value.ToString()
             Dim currentStatus As String = row.Cells("StatusInvoice").Value.ToString()
 
-            If currentStatus = "Inactive" Then
+            If currentStatus = "Voided" Then
                 MessageBox.Show("This receipt is already voided.", V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Information)
                 Exit Sub
             End If
 
             ' ⭐ FIX: Use the actual frm_void_reason form for input ⭐
+            ' NOTE: This assumes you have a form named frm_void_reason with a public property called VoidReason
             Dim frmReason As New frm_void_reason()
             frmReason.Text = $"Voiding Receipt: {receiptNo}"
 
@@ -292,7 +280,7 @@ Public Class frm_voide
         Dim apiUrl As String = $"{API_BASE_URL}/api/pos/sales/{receiptNo}/void"
 
         Dim requestBody As New JObject From {
-            {"void_user", V_VoidUser},
+            {"void_user", Me.VoidingUserName},
             {"void_reason", voidReason}
         }
 
@@ -305,7 +293,7 @@ Public Class frm_voide
             Dim responseString As String = Await response.Content.ReadAsStringAsync()
 
             If response.IsSuccessStatusCode Then
-                MessageBox.Show($"Receipt {receiptNo} successfully VOIDED. Data will now refresh.", V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Information)
+                MessageBox.Show($"Receipt {receiptNo} successfully VOIDED by user {Me.VoidingUserName}. Data will now refresh.", V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Information)
                 ' Refresh the grid to show the updated status
                 Await LoadReceiptsData()
             Else

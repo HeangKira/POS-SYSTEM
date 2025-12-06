@@ -22,8 +22,6 @@ Public Class frm_pos_sell
 
     ' ⭐ ADDED: Variable to hold the instance of the second display form ⭐
     Private v_DisplayForm As frm_display_second
-
-
     ' ⭐ NEW: Public Sub to receive data from frm_dl_list ⭐
     Public Sub SetDeliveryInfo(ByVal deliveryId As Integer, ByVal deliveryName As String)
         v_DeliveryId = deliveryId
@@ -88,10 +86,16 @@ Public Class frm_pos_sell
     Private v_LastLineDisPct As Decimal = 0D ' Stores the percentage from the last line discount entry
     Private Const API_BASE_URL As String = "http://localhost:5005" ' Your Node.js API server address
     Private ReadOnly httpClient As New HttpClient() ' HttpClient instance for API calls
-    Private Const V_StoreId As String = "S001" ' Store ID
-    Private Const V_CashierId As String = "C001" ' Logged-in cashier ID (Replace with actual login variable)
-    Private Const V_StoreName As String = "Positron Store"
-    Private Const V_CashierName As String = "Cashier Name"
+    'Private Const V_StoreId As String = "S001" ' Store ID
+    'Private Const V_CashierId As String = "C001" ' Logged-in cashier ID (Replace with actual login variable)
+    'Private Const V_StoreName As String = "Positron Store"
+    'Private Const V_CashierName As String = "Cashier Name"
+
+    Public Property StoreId As String
+    Public Property StoreName As String ' This will hold the "Code-Name" string
+    Public Property CashierId As String
+    Public Property CashierName As String
+    Public Property LoggedInUserId As String ' For logging/updates
 
     ' ---------------------------------------------------------------------
     ' --- 3. Form Load and DataGridView Initialization ---
@@ -114,8 +118,8 @@ Public Class frm_pos_sell
         txtVat.ReadOnly = True
         txtVat.BackColor = System.Drawing.SystemColors.Control
 
-        lblCasheri.Text = "Sovat"
-        lblStroe.Text = "Positron Store"
+        lblCasheri.Text = CashierName
+        lblStroe.Text = StoreName
 
         UpdateTotalSummary()
         SumPaymentAmounts()
@@ -125,45 +129,115 @@ Public Class frm_pos_sell
         v_DeliveryId = 0 ' Reset ID
         v_DeliveryDate = Date.Today
 
+        If Me.Controls.ContainsKey("lblStoreName") Then
+            Me.Controls("lblStoreName").Text = Me.StoreName
+        End If
+
+        If Me.Controls.ContainsKey("lblCashierName") Then
+            Me.Controls("lblCashierName").Text = Me.CashierName
+        End If
         ' -------------------------
         ' ⭐ Secondary Display Logic (frm_display_second) ⭐
         ' -------------------------
+        'Try
+        '    Dim screens As Screen() = Screen.AllScreens
+        '    If screens.Length > 1 Then
+        '        Dim screenBounds As Rectangle = screens(0).Bounds
+        '        Me.Location = New Point(screenBounds.X + (screenBounds.Width - Me.Width) \ 2, screenBounds.Y + (screenBounds.Height - Me.Height) \ 2)
+        '        Me.FormBorderStyle = FormBorderStyle.None
+        '        Me.Show()
+        '    End If
+
+        'Catch ex As Exception
+        '    MessageBox.Show(ex.Message, V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
+        '    'WriteError(ex.Message)
+        'End Try
+
+
+
+        frm_login.ShowDialog()
+
+        InitializeSecondaryDisplay()
+
+        'Try
+        '    Dim screens As Screen() = Screen.AllScreens
+        '    If screens.Length > 1 Then
+        '        Dim screenBounds As Rectangle = screens(1).Bounds
+
+        '        ' ⭐ REVISED: Create a NEW instance and store it in the private variable ⭐
+        '        v_DisplayForm = New frm_display_second()
+
+        '        v_DisplayForm.Location = New Point(screenBounds.X + (screenBounds.Width - v_DisplayForm.Width) \ 2, screenBounds.Y + (screenBounds.Height - v_DisplayForm.Height) \ 2)
+        '        v_DisplayForm.FormBorderStyle = FormBorderStyle.None
+        '        v_DisplayForm.Show() ' Use Show, not ShowDialog
+
+        '    Else
+        '        v_DisplayForm = New frm_display_second()
+
+        '    End If
+        'Catch ex As Exception
+        '    MessageBox.Show("Error initializing secondary display: " & ex.Message, V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
+        'End Try
+
+        ' -------------------------
+        ' -------------------------
+
+    End Sub
+    ' --- frm_pos_sell Code ---
+    Private isDisplayInitialized As Boolean = False
+
+
+    Public Sub InitializeSecondaryDisplay()
         Try
+            ' 1. Get all connected screens
             Dim screens As Screen() = Screen.AllScreens
-            If screens.Length > 1 Then
-                Dim screenBounds As Rectangle = screens(1).Bounds
+
+            ' 2. Look for the secondary screen
+            Dim secondaryScreen As Screen = Nothing
+
+            ' Find the first non-primary screen (assuming the main POS form is on the primary)
+            For Each screen As Screen In screens
+                If Not screen.Primary Then
+                    secondaryScreen = screen
+                    Exit For
+                End If
+            Next
+
+            ' 3. If a secondary screen is found, create and position the form
+            If secondaryScreen IsNot Nothing Then
 
                 ' ⭐ REVISED: Create a NEW instance and store it in the private variable ⭐
                 v_DisplayForm = New frm_display_second()
 
-                v_DisplayForm.Location = New Point(screenBounds.X + (screenBounds.Width - v_DisplayForm.Width) \ 2, screenBounds.Y + (screenBounds.Height - v_DisplayForm.Height) \ 2)
+                ' Set borderless style and manual positioning first
                 v_DisplayForm.FormBorderStyle = FormBorderStyle.None
+                v_DisplayForm.StartPosition = FormStartPosition.Manual ' Crucial for manual positioning
+                v_DisplayForm.WindowState = FormWindowState.Normal
+
+                ' Calculate the X coordinate: Screen Left + (Screen Width - Form Width) / 2
+                Dim centerX As Integer = secondaryScreen.Bounds.X + ((secondaryScreen.Bounds.Width - v_DisplayForm.Width) \ 2)
+
+                ' Calculate the Y coordinate: Screen Top + (Screen Height - Form Height) / 2
+                Dim centerY As Integer = secondaryScreen.Bounds.Y + ((secondaryScreen.Bounds.Height - v_DisplayForm.Height) \ 2)
+
+                ' Set the form's location to the calculated center point
+                v_DisplayForm.Location = New Point(centerX, centerY)
                 v_DisplayForm.Show() ' Use Show, not ShowDialog
 
             Else
-                ' If only one screen, still create the form but don't position it on the second screen
+                ' Handle case with only one screen 
                 v_DisplayForm = New frm_display_second()
-                ' You might want to hide it or show it on the main screen for debugging
-                ' v_DisplayForm.Show() 
+                v_DisplayForm.ShowInTaskbar = False ' Don't clutter the taskbar
+
+                v_DisplayForm.StartPosition = FormStartPosition.CenterScreen
+                v_DisplayForm.Show()
+
+                ' Optional: Show a message if you need to know it failed
+                ' MessageBox.Show("No secondary display detected.", V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Information)
             End If
+
         Catch ex As Exception
             MessageBox.Show("Error initializing secondary display: " & ex.Message, V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
-        End Try
-
-        ' -------------------------
-        ' -------------------------
-
-        Try
-            Dim screens As Screen() = Screen.AllScreens
-            If screens.Length > 1 Then
-                Dim screenBounds As Rectangle = screens(0).Bounds
-                Me.Location = New Point(screenBounds.X + (screenBounds.Width - Me.Width) \ 2, screenBounds.Y + (screenBounds.Height - Me.Height) \ 2)
-                Me.FormBorderStyle = FormBorderStyle.None
-                Me.Show()
-            End If
-        Catch ex As Exception
-            MessageBox.Show(ex.Message, V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
-            'WriteError(ex.Message)
         End Try
     End Sub
 
@@ -345,6 +419,7 @@ Public Class frm_pos_sell
     Private Sub btnVoide_Click(sender As Object, e As EventArgs) Handles btnVoide.Click
         Dim F As New frm_voide()
         F.FormBorderStyle = FormBorderStyle.None
+        F.SetVoidingUser(Me.CashierName)
         F.ShowDialog()
     End Sub
     Private Sub btnDriver_Click(sender As Object, e As EventArgs) Handles btnDriver.Click
@@ -1342,13 +1417,13 @@ Public Class frm_pos_sell
 
         Dim headerObject As New JObject From {
             {"receipt_no", receiptNoPrefix},
-            {"store_id", V_StoreId},
-            {"store_name", V_StoreName},
+            {"store_id", Me.StoreId},
+            {"store_name", Me.StoreName},
             {"receipt_date", receiptDate.ToString("yyyy-MM-ddTHH:mm:ss")},
             {"receipt_batchinvoice", receiptNoPrefix},
             {"receipt_status", 1}, ' SmallInt value
-            {"cashier_id", V_CashierId},
-            {"cashier_name", V_CashierName},
+            {"cashier_id", Me.CashierId},
+            {"cashier_name", Me.CashierName},
             {"coment", ""},
             {"sub_total", totalGrossAmt}, ' Gross Amount
             {"line_discount", totalLineDiscount},
@@ -1360,7 +1435,7 @@ Public Class frm_pos_sell
             {"total_discount_vat", vatAmt}, ' VAT Amount
             {"grand_total", finalTotal}, ' Net Total Due
             {"exc_rate", 1D},
-            {"add_user", V_CashierId},
+            {"add_user", Me.CashierId},
             {"delivery_id", If(isDeliverySale, JToken.FromObject(deliveryId), JValue.CreateNull())},
             {"delivery_name", If(isDeliverySale, JToken.FromObject(deliveryName), JValue.CreateNull())},
             {"delivery_date", If(isDeliverySale, JToken.FromObject(v_DeliveryDate.ToString("yyyy-MM-ddTHH:mm:ss")), JValue.CreateNull())}
@@ -2022,23 +2097,33 @@ Public Class frm_pos_sell
         Const DASH_LINE As String = "----------------------------------------" ' 40 dashes
         Const EQUAL_LINE As String = "========================================" ' 40 equals
 
-        ' Helper function to center a string based on TOTAL_WIDTH
+
         Dim CenterLine = Function(text As String) As String
-                             Dim padding As Integer = (TOTAL_WIDTH - text.Length) / 2
+                             ' ⭐ THE CRITICAL FIX: Check for Nothing and convert it to an empty string ("")
+                             Dim safeText As String = If(text, "")
+
+                             Dim padding As Integer = (TOTAL_WIDTH - safeText.Length) / 2
                              If padding < 0 Then padding = 0
-                             Return New String(" "c, padding) & text
+                             Return New String(" "c, padding) & safeText
                          End Function
+
+        '' Helper function to center a string based on TOTAL_WIDTH
+        'Dim CenterLine = Function(text As String) As String
+        '                     Dim padding As Integer = (TOTAL_WIDTH - text.Length) / 2
+        '                     If padding < 0 Then padding = 0
+        '                     Return New String(" "c, padding) & text
+        '                 End Function
 
         ' --- Header Section ---
         receiptLines.AppendLine()
-        receiptLines.AppendLine(CenterLine(V_StoreName))
-        receiptLines.AppendLine(CenterLine("Store ID: " & V_StoreId))
+        receiptLines.AppendLine(CenterLine(Me.StoreName))
+        receiptLines.AppendLine(CenterLine("Store ID: " & Me.StoreId))
         receiptLines.AppendLine(CenterLine("Tel: 020-386-****"))
         receiptLines.AppendLine(DASH_LINE)
 
         receiptLines.AppendLine(String.Format("RECEIPT NO: {0}", receiptNo))
         receiptLines.AppendLine(String.Format("DATE: {0}", DateTime.Now.ToString("yyyy-MM-dd HH:mm")))
-        receiptLines.AppendLine(String.Format("CASHIER: {0}", V_CashierName))
+        receiptLines.AppendLine(String.Format("CASHIER: {0}", Me.CashierName))
 
         If v_DeliveryId > 0 Then
             receiptLines.AppendLine(String.Format("DELIVERY: {0}", lblDelivery.Text))
@@ -2174,4 +2259,16 @@ Public Class frm_pos_sell
             MessageBox.Show("Error preparing receipt print/preview: " & ex.Message, V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Sub
+
+    Private Sub btnSell_Click(sender As Object, e As EventArgs) Handles btnSell.Click
+        Dim F As New frm_reports_mgt
+        F.FormBorderStyle = FormBorderStyle.None
+        F.ShowDialog()
+    End Sub
+
+    Private Sub btnSaveDraft_Click(sender As Object, e As EventArgs) Handles btnSaveDraft.Click
+        MessageBox.Show("Coming Soon!")
+    End Sub
+
+
 End Class
