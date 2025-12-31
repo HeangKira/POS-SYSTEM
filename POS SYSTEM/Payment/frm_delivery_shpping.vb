@@ -9,12 +9,12 @@ Imports System.Drawing
 Public Class frm_delivery_shpping
 
     ' --- Constants and API Client ---
-    Private Const API_BASE_URL As String = "http://localhost:5005"
+    Private Const API_BASE_URL As String = "http://172.29.29.56:5005"
+    'Private Const API_BASE_URL As String = "http://localhost:5005"
     Private ReadOnly httpClient As New HttpClient()
     Private Const V_ProjectName As String = "POS System - Payment Log"
-    Private Const V_DeliveryUser As String = "ADMIN" ' User performing the update
 
-    ' --- Windows DLL Imports (Unchanged) ---
+    ' --- Windows DLL Imports for Draggable Form ---
     <DllImport("user32.DLL", EntryPoint:="ReleaseCapture")>
     Private Shared Sub ReleaseCapture()
     End Sub
@@ -55,6 +55,7 @@ Public Class frm_delivery_shpping
 
         InitializeDataGridViewLayout()
 
+        ' Set default date to today
         If Me.Controls.ContainsKey("dtpDLDate") AndAlso TypeOf Me.Controls("dtpDLDate") Is DateTimePicker Then
             CType(Me.Controls("dtpDLDate"), DateTimePicker).Value = DateTime.Today
         End If
@@ -74,7 +75,7 @@ Public Class frm_delivery_shpping
             .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
             .Columns.Clear()
 
-            ' Define all columns for data access
+            ' Define columns
             .Columns.Add("StoreCode", "Store Code")
             .Columns.Add("StoreName", "Store Name")
             .Columns.Add("ReceiptNumber", "Receipt Number")
@@ -84,201 +85,254 @@ Public Class frm_delivery_shpping
             .Columns.Add("DeliveryName", "Delivery Name")
             .Columns.Add("DeliveryID", "Delivery ID")
 
-            ' Column Visibility and Formatting
+            ' Formatting
             .Columns("CashierName").Visible = False
             .Columns("StatusInvoice").Visible = False
-
-            .Columns("StoreName").AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
             .Columns("StoreCode").AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
             .Columns("ReceiptNumber").AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
-            .Columns("ReceiptDate").AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
-
             .Columns("ReceiptDate").DefaultCellStyle.Format = "yyyy-MM-dd HH:mm"
 
-            ' Add the Receipt Amount button (Log Method)
+            ' Add the "Receipt Amount" button column
             If Not .Columns.Contains("LogPaymentButton") Then
                 Dim btnCol As New DataGridViewButtonColumn()
                 With btnCol
-                    .HeaderText = "Receipt Amount"
+                    .HeaderText = "Action"
                     .Name = "LogPaymentButton"
                     .Text = "Receipt Amount"
                     .UseColumnTextForButtonValue = True
                     .Width = 120
-                    .AutoSizeMode = DataGridViewAutoSizeColumnMode.None
+                    .FlatStyle = FlatStyle.Flat
+                    .AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
                 End With
                 .Columns.Add(btnCol)
             End If
-            If .Columns.Contains("AssignDLButton") Then .Columns.Remove("AssignDLButton")
         End With
     End Sub
 
+    'Private Async Function LoadReceiptsData() As Task
+    '    Dim apiUrl As String = $"{API_BASE_URL}/api/pos/sales"
+
+    '    Dim selectedDate As DateTime = DateTime.Today
+    '    If Me.Controls.ContainsKey("dtpDLDate") AndAlso TypeOf Me.Controls("dtpDLDate") Is DateTimePicker Then
+    '        selectedDate = CType(Me.Controls("dtpDLDate"), DateTimePicker).Value.Date
+    '    End If
+
+    '    Try
+    '        Dim response As HttpResponseMessage = Await httpClient.GetAsync(apiUrl)
+
+    '        If response.IsSuccessStatusCode Then
+    '            Dim jsonString As String = Await response.Content.ReadAsStringAsync()
+    '            Dim jsonObject As JObject = JObject.Parse(jsonString)
+    '            Dim salesListToken As JToken = jsonObject("sales_list")
+    '            Dim reportData As JArray = If(salesListToken IsNot Nothing, CType(salesListToken, JArray), New JArray())
+
+    '            dgtDeliveryList.Rows.Clear()
+
+    '            If reportData.Count > 0 Then
+    '                For Each item As JObject In reportData.Children(Of JObject)()
+    '                    Dim receiptDateTime As DateTime = If(item("receipt_date") IsNot Nothing, item("receipt_date").ToObject(Of DateTime), DateTime.MinValue)
+
+    '                    ' 1. Filter by Date
+    '                    If receiptDateTime.Date = selectedDate.Date Then
+
+    '                        ' 2. Filter: Only show Active (Status 1) transactions
+    '                        Dim receiptStatus As Integer = If(item("receipt_status") IsNot Nothing, item("receipt_status").ToObject(Of Integer), 0)
+    '                        If receiptStatus <> 1 Then Continue For
+
+    '                        Dim storeID As String = If(item("store_id") IsNot Nothing, item("store_id").ToString(), "")
+    '                        Dim storeName As String = If(item("store_name") IsNot Nothing, item("store_name").ToString(), "")
+    '                        Dim receiptNo As String = If(item("receipt_no") IsNot Nothing, item("receipt_no").ToString(), "")
+    '                        Dim deliveryName As String = If(item("delivery_name") IsNot Nothing AndAlso item("delivery_name").Type <> JTokenType.Null, item("delivery_name").ToString(), "N/A")
+
+    '                        ' Add the row
+    '                        Dim rowIndex As Integer = dgtDeliveryList.Rows.Add(
+    '                            storeID,
+    '                            storeName,
+    '                            receiptNo,
+    '                            receiptDateTime,
+    '                            "Active",
+    '                            If(item("cashier_name") IsNot Nothing, item("cashier_name").ToString(), ""),
+    '                            deliveryName,
+    '                            If(item("delivery_id") IsNot Nothing AndAlso item("delivery_id").Type <> JTokenType.Null, item("delivery_id").ToString(), "")
+    '                        )
+
+    '                        ' Color the button green
+    '                        dgtDeliveryList.Rows(rowIndex).Cells("LogPaymentButton").Style.BackColor = Color.ForestGreen
+    '                        dgtDeliveryList.Rows(rowIndex).Cells("LogPaymentButton").Style.ForeColor = Color.White
+    '                    End If
+    '                Next
+    '            End If
+    '        End If
+
+    '    Catch ex As Exception
+    '        MessageBox.Show("Error loading data: " & ex.Message, V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
+    '    End Try
+    'End Function
     Private Async Function LoadReceiptsData() As Task
+        ' 1. Identify the API URL
         Dim apiUrl As String = $"{API_BASE_URL}/api/pos/sales"
 
-        Dim selectedDate As DateTime = DateTime.Today
-        If Me.Controls.ContainsKey("dtpDLDate") AndAlso TypeOf Me.Controls("dtpDLDate") Is DateTimePicker Then
-            selectedDate = CType(Me.Controls("dtpDLDate"), DateTimePicker).Value.Date
-        End If
+        ' 2. Get the date from your DateTimePicker control
+        ' Note: Using Me.dtpDLDate directly is safer if it's a standard control on the form
+        Dim selectedDate As DateTime = dtpDLDate.Value.Date
 
         Try
+            ' Show a loading state or clear rows first
+            dgtDeliveryList.Rows.Clear()
+
+            ' 3. Security/Permission Check
+            Dim canUserSettle As Boolean = UserSession.HasAction("/pos/btn-delivery", "create") OrElse
+                                       UserSession.HasAction("/pos/btn-delivery", "update")
+
+            ' 4. Fetch Data
             Dim response As HttpResponseMessage = Await httpClient.GetAsync(apiUrl)
 
             If response.IsSuccessStatusCode Then
                 Dim jsonString As String = Await response.Content.ReadAsStringAsync()
                 Dim jsonObject As JObject = JObject.Parse(jsonString)
-                Dim salesListToken As JToken = jsonObject("sales_list")
-                Dim reportData As JArray = If(salesListToken IsNot Nothing, CType(salesListToken, JArray), New JArray())
+                Dim reportData As JArray = If(jsonObject("sales_list") IsNot Nothing, CType(jsonObject("sales_list"), JArray), New JArray())
 
-                dgtDeliveryList.Rows.Clear()
+                ' 5. Loop and Filter
+                For Each item As JObject In reportData
+                    ' Get the date from JSON
+                    Dim receiptDateTime As DateTime = If(item("receipt_date") IsNot Nothing, item("receipt_date").ToObject(Of DateTime), DateTime.MinValue)
 
-                If reportData.Count > 0 Then
+                    ' ⭐ CRITICAL FILTER: Compare the Date portions only
+                    If receiptDateTime.Date = selectedDate Then
 
-                    For Each item As JObject In reportData.Children(Of JObject)()
+                        ' Status Check (e.g., only show Active invoices)
+                        Dim receiptStatus As Integer = If(item("receipt_status") IsNot Nothing, item("receipt_status").ToObject(Of Integer), 0)
+                        If receiptStatus <> 1 Then Continue For
 
-                        Dim receiptDateTime As DateTime = If(item("receipt_date") IsNot Nothing, item("receipt_date").ToObject(Of DateTime), DateTime.MinValue)
+                        ' Add the data to the DataGridView
+                        Dim rowIndex As Integer = dgtDeliveryList.Rows.Add(
+                        item("store_id").ToString(),
+                        item("store_name").ToString(),
+                        item("receipt_no").ToString(),
+                        receiptDateTime,
+                        "Active",
+                        item("cashier_name").ToString(),
+                        If(item("delivery_name")?.Type <> JTokenType.Null, item("delivery_name").ToString(), "N/A"),
+                        If(item("delivery_id")?.Type <> JTokenType.Null, item("delivery_id").ToString(), "")
+                    )
 
-                        ' 1. Date filter
-                        If receiptDateTime.Date = selectedDate.Date Then
-
-                            ' Status check
-                            Dim receiptStatus As Integer = If(item("receipt_status") IsNot Nothing, item("receipt_status").ToObject(Of Integer), 0)
-                            Dim statusString As String = If(receiptStatus = 1, "Active", "Voided")
-
-                            ' 2. FILTER: Skip if the status is Voided (Only show Active transactions)
-                            If statusString = "Voided" Then
-                                Continue For ' Skip to the next receipt in the loop
-                            End If
-
-                            ' Robust, safe retrieval of all required fields
-                            Dim storeID As String = If(item("store_id") IsNot Nothing, item("store_id").ToString(), "")
-                            Dim storeName As String = If(item("store_name") IsNot Nothing, item("store_name").ToString(), "")
-                            Dim receiptNo As String = If(item("receipt_no") IsNot Nothing, item("receipt_no").ToString(), "")
-                            Dim cashierName As String = If(item("cashier_name") IsNot Nothing, item("cashier_name").ToString(), "")
-
-                            ' Delivery fields (check for both Missing and Null token types)
-                            Dim deliveryID As String = If(item("delivery_id") IsNot Nothing AndAlso item("delivery_id").Type <> JTokenType.Null, item("delivery_id").ToString(), "")
-                            Dim deliveryName As String = If(item("delivery_name") IsNot Nothing AndAlso item("delivery_name").Type <> JTokenType.Null, item("delivery_name").ToString(), "")
-
-                            ' Add row using safely extracted variables
-                            Dim rowIndex As Integer = dgtDeliveryList.Rows.Add(
-                                storeID,
-                                storeName,
-                                receiptNo,
-                                receiptDateTime,
-                                statusString,
-                                cashierName,
-                                deliveryName,
-                                deliveryID
-                            )
-
-                            ' Conditional formatting and button status (Simplified as only Active rows are included)
-                            With dgtDeliveryList.Rows(rowIndex)
-                                .Cells("LogPaymentButton").ReadOnly = False
-                                .Cells("LogPaymentButton").Style.BackColor = Color.ForestGreen
-                                .Cells("LogPaymentButton").Value = "Receipt Amount"
-                            End With
-                        End If
-                    Next
-                End If
-            Else
-                Dim errorDetails = Await response.Content.ReadAsStringAsync()
-                MessageBox.Show($"API Error ({response.StatusCode}): Failed to fetch sales list. Details: {errorDetails}", V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
+                        ' Handle Button Appearance based on permissions
+                        ApplyButtonStyling(rowIndex, canUserSettle)
+                    End If
+                Next
             End If
-
-        Catch ex As HttpRequestException
-            MessageBox.Show("Connection Error: Could not reach the API server. 🔴", V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
         Catch ex As Exception
-            MessageBox.Show("Error processing API response or binding data: " & ex.Message & vbCrLf & "Source: " & ex.Source, V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("Error: " & ex.Message, V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Function
 
+    ' Helper method to keep code clean
+    Private Sub ApplyButtonStyling(rowIndex As Integer, canUserSettle As Boolean)
+        With dgtDeliveryList.Rows(rowIndex).Cells("LogPaymentButton")
+            If canUserSettle Then
+                .Value = "Receipt Amount"
+                .Style.BackColor = Color.ForestGreen
+                .Style.ForeColor = Color.White
+                .ReadOnly = False
+            Else
+                .Value = "Locked"
+                .Style.BackColor = Color.LightGray
+                .Style.ForeColor = Color.DimGray
+                .ReadOnly = True
+            End If
+        End With
+    End Sub
+
     ''' <summary>
-    ''' Logs the original payment method (Cash/QR) to the pay_orginalmethod field in the database.
+    ''' Updates the payment log in the database via API.
     ''' </summary>
     Private Async Function UpdatePaymentLog(ByVal receiptNo As String, ByVal originalPaymentMethod As String) As Task
-        ' API ENDPOINT URL: PUT /api/pos/sales/{receipt_no}/update-delivery-payment
         Dim apiUrl As String = $"{API_BASE_URL}/api/pos/sales/{receiptNo}/update-delivery-payment"
+        Dim currentLoggedUser As String = main_pos_system.LoggedInUserName
 
-        ' Request body contains the user and the original payment method to log
+        If String.IsNullOrEmpty(currentLoggedUser) Then currentLoggedUser = "System"
+
         Dim requestBody As New JObject From {
-            {"pay_updateby", V_DeliveryUser},
-            {"pay_orginalmethod", originalPaymentMethod} ' This is the value from frm_assigned_dl ("Cash" or "QR")
+            {"pay_updateby", currentLoggedUser},
+            {"pay_orginalmethod", originalPaymentMethod}
         }
 
-        Dim jsonPayload As String = requestBody.ToString()
-
         Try
-            Dim content As New StringContent(jsonPayload, System.Text.Encoding.UTF8, "application/json")
+            Dim content As New StringContent(requestBody.ToString(), System.Text.Encoding.UTF8, "application/json")
             Dim response As HttpResponseMessage = Await httpClient.PutAsync(apiUrl, content)
 
-            Dim responseString As String = Await response.Content.ReadAsStringAsync()
-
             If response.IsSuccessStatusCode Then
-                MessageBox.Show($"Receipt {receiptNo} payment log updated successfully. Original method logged as '{originalPaymentMethod}'.", V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Information)
-                Await LoadReceiptsData()
+                MessageBox.Show($"Receipt {receiptNo} settled successfully as '{originalPaymentMethod}'.", V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Information)
+                Await LoadReceiptsData() ' Refresh the grid
             Else
-                Dim errorMessage As String = responseString
-                Try
-                    Dim errorJson As JObject = JObject.Parse(responseString)
-                    errorMessage = errorJson("message")?.ToString() & If(errorJson("details") IsNot Nothing, $" (Details: {errorJson("details").ToString()})", "")
-                Catch exJson As Exception
-                    ' Fallback
-                End Try
-
-                MessageBox.Show($"API Update Failed ({response.StatusCode}): {errorMessage}", V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
+                MessageBox.Show("Failed to update payment. Please try again.", V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
             End If
-
-        Catch ex As HttpRequestException
-            MessageBox.Show("Connection Error: Could not reach the API server during update operation. 🔴", V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
         Catch ex As Exception
-            MessageBox.Show("An unexpected error occurred during update processing: " & ex.Message & vbCrLf & "Source: " & ex.Source, V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("API Error: " & ex.Message, V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Function
 
     ' ---------------------------------------------------------------------
-    ' ## 📅 Date Picker and Button Click Handlers
+    ' ## 📅 Events
     ' ---------------------------------------------------------------------
     Private Async Sub dtpDLDate_ValueChanged(sender As Object, e As EventArgs) Handles dtpDLDate.ValueChanged
         Await LoadReceiptsData()
     End Sub
 
+
+    'Private Async Sub dgtDeliveryList_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgtDeliveryList.CellContentClick
+    '    ' Check if "Receipt Amount" button clicked
+    '    If e.RowIndex >= 0 AndAlso e.ColumnIndex = dgtDeliveryList.Columns("LogPaymentButton").Index Then
+
+    '        Dim clickedRow As DataGridViewRow = dgtDeliveryList.Rows(e.RowIndex)
+    '        Dim receiptNo As String = clickedRow.Cells("ReceiptNumber").Value.ToString()
+
+    '        Try
+    '            ' Open the settlement dialog
+    '            Dim frm As New frm_assigned_dl()
+    '            frm.ReceiptNumber = receiptNo
+
+    '            If frm.ShowDialog(Me) = DialogResult.OK Then
+    '                Dim selectedMethod As String = frm.OriginalPaymentMethod
+    '                ' Update DB: This changes COD to the actual method (Cash/QR)
+    '                Await UpdatePaymentLog(receiptNo, selectedMethod)
+    '            End If
+
+    '            frm.Dispose()
+    '        Catch ex As Exception
+    '            MessageBox.Show("Error: " & ex.Message, V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
+    '        End Try
+    '    End If
+    'End Sub
     Private Async Sub dgtDeliveryList_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgtDeliveryList.CellContentClick
-        ' Check if the clicked cell is the LogPaymentButton (Receipt Amount button)
         If e.RowIndex >= 0 AndAlso e.ColumnIndex = dgtDeliveryList.Columns("LogPaymentButton").Index Then
 
-            Dim clickedRow As DataGridViewRow = dgtDeliveryList.Rows(e.RowIndex)
-            Dim receiptNo As String = clickedRow.Cells("ReceiptNumber").Value.ToString()
-            Dim statusString As String = clickedRow.Cells("StatusInvoice").Value.ToString()
+            ' ⭐ THE SECURITY GUARD: Check permission again before doing anything
+            Dim canUserSettle As Boolean = UserSession.HasAction("/pos/btn-delivery", "create") OrElse
+                                       UserSession.HasAction("/pos/btn-delivery", "update")
 
-            ' Safety check (though Voided rows should not be displayed)
-            If statusString = "Voided" Then
-                MessageBox.Show($"Receipt {receiptNo} is Voided and cannot be processed.", V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Warning)
-                Return
+            If Not canUserSettle Then
+                MessageBox.Show("Access Denied: You have 'View' permission only. You cannot perform this action.",
+                            V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Stop)
+                Exit Sub
             End If
 
-            Try
-                ' Open the receipt details/payment form
-                Dim frm As New frm_assigned_dl()
+            ' 2. Proceed with existing logic if authorized
+            Dim clickedRow As DataGridViewRow = dgtDeliveryList.Rows(e.RowIndex)
+            Dim receiptNo As String = clickedRow.Cells("ReceiptNumber").Value.ToString()
 
-                ' Pass required data to the form (ReceiptNumber is essential)
+            Try
+                Dim frm As New frm_assigned_dl()
                 frm.ReceiptNumber = receiptNo
 
-                ' Show the form as a dialog
                 If frm.ShowDialog(Me) = DialogResult.OK Then
-
                     Dim selectedMethod As String = frm.OriginalPaymentMethod
-
-                    ' Call the API function to log the payment method
                     Await UpdatePaymentLog(receiptNo, selectedMethod)
-
                 End If
-
-                frm.Dispose() ' Clean up the form object
-
+                frm.Dispose()
             Catch ex As Exception
-                MessageBox.Show("Error opening Receipt Amount form: " & ex.Message, V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
+                MessageBox.Show("Error: " & ex.Message, V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
             End Try
         End If
     End Sub
-
 End Class

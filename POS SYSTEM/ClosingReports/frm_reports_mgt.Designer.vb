@@ -31,8 +31,8 @@ Partial Class frm_reports_mgt
         Me.IconButton1 = New FontAwesome.Sharp.IconButton()
         Me.IconButton2 = New FontAwesome.Sharp.IconButton()
         Me.IconButton3 = New FontAwesome.Sharp.IconButton()
-        Me.btn_Summary_Daily_Sale = New FontAwesome.Sharp.IconButton()
-        Me.Sale_Invoice_By_Payment = New FontAwesome.Sharp.IconButton()
+        Me.btnSaleByPaymentMethod = New FontAwesome.Sharp.IconButton()
+        Me.btnItemixedSaleReport = New FontAwesome.Sharp.IconButton()
         Me.btn_Product_Sale_Reports = New FontAwesome.Sharp.IconButton()
         Me.Panel_TitleBar.SuspendLayout()
         Me.Panel1.SuspendLayout()
@@ -123,8 +123,8 @@ Partial Class frm_reports_mgt
         Me.Panel1.Controls.Add(Me.IconButton1)
         Me.Panel1.Controls.Add(Me.IconButton2)
         Me.Panel1.Controls.Add(Me.IconButton3)
-        Me.Panel1.Controls.Add(Me.btn_Summary_Daily_Sale)
-        Me.Panel1.Controls.Add(Me.Sale_Invoice_By_Payment)
+        Me.Panel1.Controls.Add(Me.btnSaleByPaymentMethod)
+        Me.Panel1.Controls.Add(Me.btnItemixedSaleReport)
         Me.Panel1.Controls.Add(Me.btn_Product_Sale_Reports)
         Me.Panel1.Location = New System.Drawing.Point(0, 35)
         Me.Panel1.Name = "Panel1"
@@ -173,33 +173,35 @@ Partial Class frm_reports_mgt
         Me.IconButton3.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText
         Me.IconButton3.UseVisualStyleBackColor = True
         '
-        'btn_Summary_Daily_Sale
+        'btnSaleByPaymentMethod
         '
-        Me.btn_Summary_Daily_Sale.IconChar = FontAwesome.Sharp.IconChar.FileInvoice
-        Me.btn_Summary_Daily_Sale.IconColor = System.Drawing.Color.FromArgb(CType(CType(38, Byte), Integer), CType(CType(56, Byte), Integer), CType(CType(105, Byte), Integer))
-        Me.btn_Summary_Daily_Sale.IconFont = FontAwesome.Sharp.IconFont.[Auto]
-        Me.btn_Summary_Daily_Sale.IconSize = 30
-        Me.btn_Summary_Daily_Sale.Location = New System.Drawing.Point(363, 18)
-        Me.btn_Summary_Daily_Sale.Name = "btn_Summary_Daily_Sale"
-        Me.btn_Summary_Daily_Sale.Size = New System.Drawing.Size(150, 73)
-        Me.btn_Summary_Daily_Sale.TabIndex = 32
-        Me.btn_Summary_Daily_Sale.TextAlign = System.Drawing.ContentAlignment.BottomCenter
-        Me.btn_Summary_Daily_Sale.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText
-        Me.btn_Summary_Daily_Sale.UseVisualStyleBackColor = True
+        Me.btnSaleByPaymentMethod.IconChar = FontAwesome.Sharp.IconChar.FileInvoice
+        Me.btnSaleByPaymentMethod.IconColor = System.Drawing.Color.FromArgb(CType(CType(38, Byte), Integer), CType(CType(56, Byte), Integer), CType(CType(105, Byte), Integer))
+        Me.btnSaleByPaymentMethod.IconFont = FontAwesome.Sharp.IconFont.[Auto]
+        Me.btnSaleByPaymentMethod.IconSize = 30
+        Me.btnSaleByPaymentMethod.Location = New System.Drawing.Point(363, 18)
+        Me.btnSaleByPaymentMethod.Name = "btnSaleByPaymentMethod"
+        Me.btnSaleByPaymentMethod.Size = New System.Drawing.Size(150, 73)
+        Me.btnSaleByPaymentMethod.TabIndex = 32
+        Me.btnSaleByPaymentMethod.Text = "Sales By Payment Method"
+        Me.btnSaleByPaymentMethod.TextAlign = System.Drawing.ContentAlignment.BottomCenter
+        Me.btnSaleByPaymentMethod.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText
+        Me.btnSaleByPaymentMethod.UseVisualStyleBackColor = True
         '
-        'Sale_Invoice_By_Payment
+        'btnItemixedSaleReport
         '
-        Me.Sale_Invoice_By_Payment.IconChar = FontAwesome.Sharp.IconChar.FileInvoice
-        Me.Sale_Invoice_By_Payment.IconColor = System.Drawing.Color.FromArgb(CType(CType(38, Byte), Integer), CType(CType(56, Byte), Integer), CType(CType(105, Byte), Integer))
-        Me.Sale_Invoice_By_Payment.IconFont = FontAwesome.Sharp.IconFont.[Auto]
-        Me.Sale_Invoice_By_Payment.IconSize = 30
-        Me.Sale_Invoice_By_Payment.Location = New System.Drawing.Point(187, 18)
-        Me.Sale_Invoice_By_Payment.Name = "Sale_Invoice_By_Payment"
-        Me.Sale_Invoice_By_Payment.Size = New System.Drawing.Size(150, 73)
-        Me.Sale_Invoice_By_Payment.TabIndex = 31
-        Me.Sale_Invoice_By_Payment.TextAlign = System.Drawing.ContentAlignment.BottomCenter
-        Me.Sale_Invoice_By_Payment.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText
-        Me.Sale_Invoice_By_Payment.UseVisualStyleBackColor = True
+        Me.btnItemixedSaleReport.IconChar = FontAwesome.Sharp.IconChar.FileInvoice
+        Me.btnItemixedSaleReport.IconColor = System.Drawing.Color.FromArgb(CType(CType(38, Byte), Integer), CType(CType(56, Byte), Integer), CType(CType(105, Byte), Integer))
+        Me.btnItemixedSaleReport.IconFont = FontAwesome.Sharp.IconFont.[Auto]
+        Me.btnItemixedSaleReport.IconSize = 30
+        Me.btnItemixedSaleReport.Location = New System.Drawing.Point(187, 18)
+        Me.btnItemixedSaleReport.Name = "btnItemixedSaleReport"
+        Me.btnItemixedSaleReport.Size = New System.Drawing.Size(150, 73)
+        Me.btnItemixedSaleReport.TabIndex = 31
+        Me.btnItemixedSaleReport.Text = " Itemized Sales Report"
+        Me.btnItemixedSaleReport.TextAlign = System.Drawing.ContentAlignment.BottomCenter
+        Me.btnItemixedSaleReport.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText
+        Me.btnItemixedSaleReport.UseVisualStyleBackColor = True
         '
         'btn_Product_Sale_Reports
         '
@@ -211,6 +213,7 @@ Partial Class frm_reports_mgt
         Me.btn_Product_Sale_Reports.Name = "btn_Product_Sale_Reports"
         Me.btn_Product_Sale_Reports.Size = New System.Drawing.Size(150, 73)
         Me.btn_Product_Sale_Reports.TabIndex = 30
+        Me.btn_Product_Sale_Reports.Text = "Sales By Product Report"
         Me.btn_Product_Sale_Reports.TextAlign = System.Drawing.ContentAlignment.BottomCenter
         Me.btn_Product_Sale_Reports.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText
         Me.btn_Product_Sale_Reports.UseVisualStyleBackColor = True
@@ -238,8 +241,8 @@ Partial Class frm_reports_mgt
     Friend WithEvents btn_Exit As FontAwesome.Sharp.IconButton
     Friend WithEvents Label4 As Label
     Friend WithEvents Panel1 As Panel
-    Friend WithEvents btn_Summary_Daily_Sale As FontAwesome.Sharp.IconButton
-    Friend WithEvents Sale_Invoice_By_Payment As FontAwesome.Sharp.IconButton
+    Friend WithEvents btnSaleByPaymentMethod As FontAwesome.Sharp.IconButton
+    Friend WithEvents btnItemixedSaleReport As FontAwesome.Sharp.IconButton
     Friend WithEvents btn_Product_Sale_Reports As FontAwesome.Sharp.IconButton
     Friend WithEvents IconButton1 As FontAwesome.Sharp.IconButton
     Friend WithEvents IconButton2 As FontAwesome.Sharp.IconButton

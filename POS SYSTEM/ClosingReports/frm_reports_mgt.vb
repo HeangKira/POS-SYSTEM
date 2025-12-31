@@ -24,4 +24,22 @@ Public Class frm_reports_mgt
     Private Sub btn_Exit_Click(sender As Object, e As EventArgs) Handles btn_Exit.Click
         Me.Close()
     End Sub
+
+    Private Sub btn_Product_Sale_Reports_Click(sender As Object, e As EventArgs) Handles btn_Product_Sale_Reports.Click
+        Dim F As New frm_sales_by_product_report
+        F.FormBorderStyle = FormBorderStyle.None
+        F.ShowDialog()
+    End Sub
+
+    Private Sub btnItemixedSaleReport_Click(sender As Object, e As EventArgs) Handles btnItemixedSaleReport.Click
+        Dim F As New frm_sale_by_item_group_
+        F.FormBorderStyle = FormBorderStyle.None
+        F.ShowDialog()
+    End Sub
+
+    Private Sub btnSaleByPaymentMethod_Click(sender As Object, e As EventArgs) Handles btnSaleByPaymentMethod.Click
+        Dim F As New frm_sale_by_payment_method
+        F.FormBorderStyle = FormBorderStyle.None
+        F.ShowDialog()
+    End Sub
 End Class

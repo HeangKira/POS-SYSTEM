@@ -59,17 +59,17 @@ Partial Class frm_driver
         Me.Panel2.BackColor = System.Drawing.Color.FromArgb(CType(CType(187, Byte), Integer), CType(CType(129, Byte), Integer), CType(CType(91, Byte), Integer))
         Me.Panel2.Controls.Add(Me.btnClose)
         Me.Panel2.Controls.Add(Me.btnSave)
-        Me.Panel2.Location = New System.Drawing.Point(0, 286)
+        Me.Panel2.Location = New System.Drawing.Point(0, 265)
         Me.Panel2.Name = "Panel2"
-        Me.Panel2.Size = New System.Drawing.Size(682, 47)
+        Me.Panel2.Size = New System.Drawing.Size(682, 68)
         Me.Panel2.TabIndex = 20
         '
         'btnClose
         '
         Me.btnClose.Font = New System.Drawing.Font("Microsoft Tai Le", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnClose.Location = New System.Drawing.Point(107, 7)
+        Me.btnClose.Location = New System.Drawing.Point(137, 7)
         Me.btnClose.Name = "btnClose"
-        Me.btnClose.Size = New System.Drawing.Size(89, 31)
+        Me.btnClose.Size = New System.Drawing.Size(106, 49)
         Me.btnClose.TabIndex = 1
         Me.btnClose.Text = "Close"
         Me.btnClose.UseVisualStyleBackColor = True
@@ -79,7 +79,7 @@ Partial Class frm_driver
         Me.btnSave.Font = New System.Drawing.Font("Microsoft Tai Le", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.btnSave.Location = New System.Drawing.Point(11, 7)
         Me.btnSave.Name = "btnSave"
-        Me.btnSave.Size = New System.Drawing.Size(89, 31)
+        Me.btnSave.Size = New System.Drawing.Size(106, 49)
         Me.btnSave.TabIndex = 0
         Me.btnSave.Text = "Save"
         Me.btnSave.UseVisualStyleBackColor = True
@@ -107,7 +107,7 @@ Partial Class frm_driver
         Me.Panel1.Controls.Add(Me.Label1)
         Me.Panel1.Location = New System.Drawing.Point(0, 40)
         Me.Panel1.Name = "Panel1"
-        Me.Panel1.Size = New System.Drawing.Size(683, 246)
+        Me.Panel1.Size = New System.Drawing.Size(683, 225)
         Me.Panel1.TabIndex = 18
         '
         'Label10

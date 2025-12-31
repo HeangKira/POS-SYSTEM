@@ -1,0 +1,3 @@
+﻿Public Class frm_sale_by_payment_method
+
+End Class

@@ -37,8 +37,8 @@ Partial Class frm_item_master
         Me.cmb_FindBy = New System.Windows.Forms.ComboBox()
         Me.txt_Filter = New System.Windows.Forms.TextBox()
         Me.Panel_TitleBar = New System.Windows.Forms.Panel()
-        Me.Label4 = New System.Windows.Forms.Label()
         Me.btn_Exit = New FontAwesome.Sharp.IconButton()
+        Me.Label4 = New System.Windows.Forms.Label()
         Me.Panel1.SuspendLayout()
         CType(Me.Data_GridView, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Panel_TitleBar.SuspendLayout()
@@ -207,17 +207,6 @@ Partial Class frm_item_master
         Me.Panel_TitleBar.Size = New System.Drawing.Size(800, 35)
         Me.Panel_TitleBar.TabIndex = 12
         '
-        'Label4
-        '
-        Me.Label4.AutoSize = True
-        Me.Label4.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Bold)
-        Me.Label4.ForeColor = System.Drawing.SystemColors.Window
-        Me.Label4.Location = New System.Drawing.Point(21, 10)
-        Me.Label4.Name = "Label4"
-        Me.Label4.Size = New System.Drawing.Size(80, 16)
-        Me.Label4.TabIndex = 0
-        Me.Label4.Text = "List of Itms"
-        '
         'btn_Exit
         '
         Me.btn_Exit.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
@@ -235,6 +224,17 @@ Partial Class frm_item_master
         Me.btn_Exit.TabIndex = 22
         Me.btn_Exit.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
         Me.btn_Exit.UseVisualStyleBackColor = True
+        '
+        'Label4
+        '
+        Me.Label4.AutoSize = True
+        Me.Label4.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Bold)
+        Me.Label4.ForeColor = System.Drawing.SystemColors.Window
+        Me.Label4.Location = New System.Drawing.Point(21, 10)
+        Me.Label4.Name = "Label4"
+        Me.Label4.Size = New System.Drawing.Size(80, 16)
+        Me.Label4.TabIndex = 0
+        Me.Label4.Text = "List of Itms"
         '
         'frm_item_master
         '

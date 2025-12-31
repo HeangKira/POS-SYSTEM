@@ -71,7 +71,23 @@
     <PlatformTarget>x86</PlatformTarget>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DocumentFormat.OpenXml, Version=3.3.0.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocumentFormat.OpenXml.3.3.0\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
+    <Reference Include="DocumentFormat.OpenXml.Framework, Version=3.3.0.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocumentFormat.OpenXml.Framework.3.3.0\lib\net46\DocumentFormat.OpenXml.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="EPPlus, Version=8.3.1.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\EPPlus.8.3.1\lib\net462\EPPlus.dll</HintPath>
+    </Reference>
+    <Reference Include="EPPlus.Interfaces, Version=8.1.0.0, Culture=neutral, PublicKeyToken=a694d7f3b0907a61, processorArchitecture=MSIL">
+      <HintPath>..\packages\EPPlus.Interfaces.8.1.0\lib\net462\EPPlus.Interfaces.dll</HintPath>
+    </Reference>
     <Reference Include="FontAwesome.Sharp">
       <HintPath>..\..\..\JNY_Reports\Positron_Reports\Positron_Reports\bin\Debug\FontAwesome.Sharp.dll</HintPath>
     </Reference>
@@ -90,12 +106,16 @@
     <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Extensions.Logging.Abstractions.8.0.0\lib\net462\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.IO.RecyclableMemoryStream, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IO.RecyclableMemoryStream.3.0.1\lib\netstandard2.0\Microsoft.IO.RecyclableMemoryStream.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Npgsql, Version=8.0.8.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
       <HintPath>..\packages\Npgsql.8.0.8\lib\netstandard2.0\Npgsql.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
@@ -103,6 +123,11 @@
     <Reference Include="System.Collections.Immutable, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Collections.Immutable.8.0.0\lib\net462\System.Collections.Immutable.dll</HintPath>
     </Reference>
+    <Reference Include="System.ComponentModel.Annotations, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ComponentModel.Annotations.5.0.0\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Design" />
@@ -120,6 +145,10 @@
     </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security" />
+    <Reference Include="System.Security.Cryptography.Xml, Version=8.0.0.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Xml.8.0.2\lib\net462\System.Security.Cryptography.Xml.dll</HintPath>
     </Reference>
     <Reference Include="System.Text.Encodings.Web, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Text.Encodings.Web.8.0.0\lib\net462\System.Text.Encodings.Web.dll</HintPath>
@@ -143,6 +172,7 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Import Include="Microsoft.VisualBasic" />
@@ -164,6 +194,24 @@
     <Compile Include="ClosingReports\frm_reports_mgt.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="ClosingReports\frm_sales_by_product_report.Designer.vb">
+      <DependentUpon>frm_sales_by_product_report.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ClosingReports\frm_sales_by_product_report.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ClosingReports\frm_sale_by_item_group_.Designer.vb">
+      <DependentUpon>frm_sale_by_item_group_.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ClosingReports\frm_sale_by_item_group_.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ClosingReports\frm_sale_by_payment_method.Designer.vb">
+      <DependentUpon>frm_sale_by_payment_method.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ClosingReports\frm_sale_by_payment_method.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Find\frm_item_master.Designer.vb">
       <DependentUpon>frm_item_master.vb</DependentUpon>
     </Compile>
@@ -173,6 +221,26 @@
     <Compile Include="frm_display_second.Designer.vb">
       <DependentUpon>frm_display_second.vb</DependentUpon>
     </Compile>
+    <Compile Include="frm_main.Designer.vb">
+      <DependentUpon>frm_main.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frm_main.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Function Items\frm_ChangeAmt.Designer.vb">
+      <DependentUpon>frm_ChangeAmt.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Function Items\frm_ChangeAmt.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="main_pos_system.Designer.vb">
+      <DependentUpon>main_pos_system.vb</DependentUpon>
+    </Compile>
+    <Compile Include="main_pos_system.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserSession.vb" />
+    <None Include="app.manifest" />
     <None Include="frm_display_second.vb">
       <SubType>Form</SubType>
     </None>
@@ -188,17 +256,10 @@
     <Compile Include="frm_login.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="frm_main_pos.vb">
-      <SubType>Form</SubType>
+    <Compile Include="frm_OverridePin.Designer.vb">
+      <DependentUpon>frm_OverridePin.vb</DependentUpon>
     </Compile>
-    <Compile Include="frm_main_pos.Designer.vb">
-      <DependentUpon>frm_main_pos.vb</DependentUpon>
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frm_pos_sell.Designer.vb">
-      <DependentUpon>frm_pos_sell.vb</DependentUpon>
-    </Compile>
-    <Compile Include="frm_pos_sell.vb">
+    <Compile Include="frm_OverridePin.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Function Items\frm_assigned_dl.Designer.vb">
@@ -225,6 +286,19 @@
     <Compile Include="Function Items\frm_driver.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Function Items\frm_find_item.Designer.vb">
+      <DependentUpon>frm_find_item.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Function Items\frm_find_item.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Function Items\frm_reprint_recipt.Designer.vb">
+      <DependentUpon>frm_reprint_recipt.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Function Items\frm_reprint_recipt.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Module_variable.vb" />
     <Compile Include="Payment\frm_delivery_shpping.Designer.vb">
       <DependentUpon>frm_delivery_shpping.vb</DependentUpon>
     </Compile>
@@ -277,11 +351,34 @@
     <Compile Include="Payment\frm_void_reason.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="PosPrinterCommands.vb" />
+    <Compile Include="ReceiptPrinter.vb" />
+    <Compile Include="Screen User Display\frm_screen_user.Designer.vb">
+      <DependentUpon>frm_screen_user.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Screen User Display\frm_screen_user.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Setting\frm_reset_password.Designer.vb">
+      <DependentUpon>frm_reset_password.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Setting\frm_reset_password.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Setting\PostgreSQLConnection.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ClosingReports\frm_reports_mgt.resx">
       <DependentUpon>frm_reports_mgt.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ClosingReports\frm_sales_by_product_report.resx">
+      <DependentUpon>frm_sales_by_product_report.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ClosingReports\frm_sale_by_item_group_.resx">
+      <DependentUpon>frm_sale_by_item_group_.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ClosingReports\frm_sale_by_payment_method.resx">
+      <DependentUpon>frm_sale_by_payment_method.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Find\frm_item_master.resx">
       <DependentUpon>frm_item_master.vb</DependentUpon>
@@ -295,14 +392,17 @@
     <EmbeddedResource Include="frm_login.resx">
       <DependentUpon>frm_login.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="frm_main_pos.resx">
-      <DependentUpon>frm_main_pos.vb</DependentUpon>
+    <EmbeddedResource Include="frm_main.resx">
+      <DependentUpon>frm_main.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="frm_pos_sell.resx">
-      <DependentUpon>frm_pos_sell.vb</DependentUpon>
+    <EmbeddedResource Include="frm_OverridePin.resx">
+      <DependentUpon>frm_OverridePin.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Function Items\frm_assigned_dl.resx">
       <DependentUpon>frm_assigned_dl.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Function Items\frm_ChangeAmt.resx">
+      <DependentUpon>frm_ChangeAmt.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Function Items\frm_check_discount.resx">
       <DependentUpon>frm_check_discount.vb</DependentUpon>
@@ -313,8 +413,17 @@
     <EmbeddedResource Include="Function Items\frm_driver.resx">
       <DependentUpon>frm_driver.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Function Items\frm_find_item.resx">
+      <DependentUpon>frm_find_item.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Function Items\frm_reprint_recipt.resx">
+      <DependentUpon>frm_reprint_recipt.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Function Items\frm_voide.resx">
       <DependentUpon>frm_voide.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="main_pos_system.resx">
+      <DependentUpon>main_pos_system.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
@@ -336,6 +445,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Payment\frm_void_reason.resx">
       <DependentUpon>frm_void_reason.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Screen User Display\frm_screen_user.resx">
+      <DependentUpon>frm_screen_user.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Setting\frm_reset_password.resx">
+      <DependentUpon>frm_reset_password.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -380,6 +495,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Positron_Logo_White2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Screenshot 2025-12-06 110420.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Ankorwat.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>

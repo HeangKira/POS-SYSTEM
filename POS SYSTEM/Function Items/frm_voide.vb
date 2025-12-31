@@ -8,36 +8,9 @@ Imports System.Drawing
 
 Public Class frm_voide
     ' --- Constants and API Client ---
-    Private Const API_BASE_URL As String = "http://localhost:5005" ' Match API base URL
+    Private Const API_BASE_URL As String = "http://172.29.29.56:5005" ' Match API base URL
     Private ReadOnly httpClient As New HttpClient()
     Private Const V_ProjectName As String = "POS System"
-
-    ' Variable to hold the actual user performing the void (set by frm_pos_sell)
-    Private _voidingUserName As String = "UNKNOWN_USER" ' Changed default to UNKNOWN_USER
-
-    Public Property VoidingUserName() As String
-        Get
-            Return _voidingUserName
-        End Get
-        Set(value As String)
-            _voidingUserName = value
-        End Set
-    End Property
-
-    ' ⭐ FIX: PUBLIC SUB TO RECEIVE THE LOGGED-IN USER NAME ⭐
-    ''' <summary>
-    ''' Sets the user ID who is performing the void operation, called by the parent form.
-    ''' </summary>
-    Public Sub SetVoidingUser(ByVal userName As String)
-        If Not String.IsNullOrEmpty(userName) Then
-            Me.VoidingUserName = userName
-        Else
-            Me.VoidingUserName = "UNKNOWN_USER" ' Safety fallback
-        End If
-    End Sub
-
-    ' Assuming dgtDeliveryList control exists on the form.
-    ' Assuming Panel_TitleBar, btn_Minimize, btn_Maximize, btn_Exit, btnClose controls exist.
 
     ' --- Windows DLL Imports (Existing Code) ---
     <DllImport("user32.DLL", EntryPoint:="ReleaseCapture")>
@@ -98,7 +71,7 @@ Public Class frm_voide
             .ReadOnly = True
             .AllowUserToAddRows = False
             .AllowUserToDeleteRows = False
-            .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
+            .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
             .Columns.Clear()
 
             ' Define fixed columns
@@ -121,7 +94,7 @@ Public Class frm_voide
                     .Text = "Void"
                     .UseColumnTextForButtonValue = True
                     .Width = 60
-                    .AutoSizeMode = DataGridViewAutoSizeColumnMode.None
+                    .AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
                 End With
                 .Columns.Add(btnCol)
             End If
@@ -130,19 +103,111 @@ Public Class frm_voide
         End With
     End Sub
 
-    ''' <summary>
-    ''' Fetches the detailed receipt report and displays data filtered by the selected date.
-    ''' </summary>
+    'Private Async Function LoadReceiptsData() As Task
+    '    Dim apiUrl As String = $"{API_BASE_URL}/api/pos/receipts-report"
+
+    '    ' Determine the target date for filtering (from the date picker)
+    '    Dim selectedDate As DateTime = DateTime.Today
+    '    If Me.Controls.ContainsKey("dtpVoidDate") AndAlso TypeOf Me.Controls("dtpVoidDate") Is DateTimePicker Then
+    '        selectedDate = CType(Me.Controls("dtpVoidDate"), DateTimePicker).Value.Date
+    '    End If
+
+    '    Try
+    '        Dim response As HttpResponseMessage = Await httpClient.GetAsync(apiUrl)
+
+    '        If response.IsSuccessStatusCode Then
+    '            Dim jsonString As String = Await response.Content.ReadAsStringAsync()
+    '            Dim jsonObject As JObject = JObject.Parse(jsonString)
+    '            Dim reportData As JArray = CType(jsonObject("report_data"), JArray)
+
+    '            dgtDeliveryList.Rows.Clear()
+
+    '            If reportData IsNot Nothing AndAlso reportData.Count > 0 Then
+
+    '                ' ⭐ Client-Side Filtering to match dtpVoidDate ⭐
+    '                For Each item As JObject In reportData.Children(Of JObject)()
+    '                    Dim receiptDate As DateTime = item("Receipt Date").ToObject(Of DateTime).Date
+
+    '                    ' Filter 1: Only display receipts that match the selected date
+    '                    If receiptDate.Date = selectedDate.Date Then
+
+    '                        Dim receiptStatus As String = item("Status Invoice").ToString()
+
+    '                        Dim rowIndex As Integer = dgtDeliveryList.Rows.Add(
+    '                            item("Store Code").ToString(),
+    '                            item("Store Name").ToString(),
+    '                            item("Receipt Number").ToString(),
+    '                            item("Receipt Date").ToObject(Of DateTime),
+    '                            receiptStatus,
+    '                            item("Cashier Name").ToString()
+    '                        )
+
+    '                        ' Conditional formatting and button status
+    '                        With dgtDeliveryList.Rows(rowIndex)
+    '                            If receiptStatus = "Voided" Then
+    '                                .DefaultCellStyle.BackColor = Color.LightCoral
+    '                                .Cells("VoidButton").ReadOnly = True
+    '                                .Cells("VoidButton").Style.BackColor = Color.Gray
+    '                                .Cells("VoidButton").Style.ForeColor = Color.DarkGray
+    '                            Else
+    '                                .Cells("VoidButton").ReadOnly = False
+    '                                .Cells("VoidButton").Style.ForeColor = Color.White
+
+    '                                ' Visually indicate if the receipt is NOT today's date
+    '                                If receiptDate.Date <> DateTime.Today.Date Then
+    '                                    .Cells("VoidButton").Style.BackColor = Color.DarkRed
+    '                                    .Cells("VoidButton").ToolTipText = "Voiding this will fail (Not Current Date)"
+    '                                Else
+    '                                    .Cells("VoidButton").Style.BackColor = Color.OrangeRed
+    '                                End If
+    '                            End If
+    '                        End With
+    '                    End If
+    '                Next
+
+    '                If dgtDeliveryList.Rows.Count = 0 Then
+    '                    Console.WriteLine($"No receipts found for {selectedDate.ToShortDateString()}.")
+    '                End If
+    '            Else
+    '                Console.WriteLine("No receipt data found in the API response.")
+    '            End If
+    '        Else
+    '            ' 🟢 IMPROVED ERROR HANDLING 🟢
+    '            Dim errorDetails = Await response.Content.ReadAsStringAsync()
+    '            Dim errorMessage As String = $"API Error ({response.StatusCode}): Failed to fetch receipts report."
+
+    '            Try
+    '                ' Try to parse the JSON error body from the server
+    '                Dim errorJson As JObject = JObject.Parse(errorDetails)
+    '                If errorJson IsNot Nothing AndAlso errorJson.ContainsKey("message") Then
+    '                    errorMessage = $"API Error ({response.StatusCode}): {errorJson("message").ToString()}"
+    '                End If
+    '            Catch exJson As Exception
+    '                ' If parsing fails, append the raw content for debugging
+    '                errorMessage = $"{errorMessage}. Raw details: {errorDetails.Substring(0, Math.Min(errorDetails.Length, 150))}..."
+    '            End Try
+
+    '            MessageBox.Show(errorMessage, V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
+    '        End If
+
+    '    Catch ex As HttpRequestException
+    '        MessageBox.Show("Connection Error: Could not reach the API server. Ensure the server is running at " & API_BASE_URL & ". 🔴", V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
+    '    Catch ex As Exception
+    '        MessageBox.Show("Error processing API response or binding data: " & ex.Message, V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
+    '    End Try
+    'End Function
     Private Async Function LoadReceiptsData() As Task
         Dim apiUrl As String = $"{API_BASE_URL}/api/pos/receipts-report"
-
-        ' Determine the target date for filtering (from the date picker)
         Dim selectedDate As DateTime = DateTime.Today
+
         If Me.Controls.ContainsKey("dtpVoidDate") AndAlso TypeOf Me.Controls("dtpVoidDate") Is DateTimePicker Then
             selectedDate = CType(Me.Controls("dtpVoidDate"), DateTimePicker).Value.Date
         End If
 
         Try
+            ' PERMISSION CHECK: Must have 'update' checkbox checked in React for "/pos/btn-void"
+            Dim canUserUpdateVoid As Boolean = UserSession.HasAction("/pos/btn-void", "update")
+
             Dim response As HttpResponseMessage = Await httpClient.GetAsync(apiUrl)
 
             If response.IsSuccessStatusCode Then
@@ -153,14 +218,10 @@ Public Class frm_voide
                 dgtDeliveryList.Rows.Clear()
 
                 If reportData IsNot Nothing AndAlso reportData.Count > 0 Then
-
-                    ' ⭐ Client-Side Filtering to match dtpVoidDate ⭐
                     For Each item As JObject In reportData.Children(Of JObject)()
                         Dim receiptDate As DateTime = item("Receipt Date").ToObject(Of DateTime).Date
 
-                        ' Filter 1: Only display receipts that match the selected date
                         If receiptDate.Date = selectedDate.Date Then
-
                             Dim receiptStatus As String = item("Status Invoice").ToString()
 
                             Dim rowIndex As Integer = dgtDeliveryList.Rows.Add(
@@ -172,68 +233,95 @@ Public Class frm_voide
                                 item("Cashier Name").ToString()
                             )
 
-                            ' Conditional formatting and button status
                             With dgtDeliveryList.Rows(rowIndex)
                                 If receiptStatus = "Voided" Then
-                                    .DefaultCellStyle.BackColor = Color.LightCoral
+                                    .Cells("VoidButton").Value = "Voided"
                                     .Cells("VoidButton").ReadOnly = True
                                     .Cells("VoidButton").Style.BackColor = Color.Gray
-                                    .Cells("VoidButton").Style.ForeColor = Color.DarkGray
                                 Else
-                                    .Cells("VoidButton").ReadOnly = False
-                                    .Cells("VoidButton").Style.ForeColor = Color.White
-
-                                    ' Visually indicate if the receipt is NOT today's date
-                                    If receiptDate.Date <> DateTime.Today.Date Then
-                                        .Cells("VoidButton").Style.BackColor = Color.DarkRed
-                                        .Cells("VoidButton").ToolTipText = "Voiding this will fail (Not Current Date)"
+                                    ' ⭐ Apply Permission Logic
+                                    If canUserUpdateVoid Then
+                                        .Cells("VoidButton").Value = "Void"
+                                        .Cells("VoidButton").ReadOnly = False
+                                        ' Visually indicate if receipt is not from today
+                                        If receiptDate.Date <> DateTime.Today.Date Then
+                                            .Cells("VoidButton").Style.BackColor = Color.DarkRed
+                                        Else
+                                            .Cells("VoidButton").Style.BackColor = Color.OrangeRed
+                                        End If
+                                        .Cells("VoidButton").Style.ForeColor = Color.White
                                     Else
-                                        .Cells("VoidButton").Style.BackColor = Color.OrangeRed
+                                        ' 🔒 User only has "View" - Lock the button
+                                        .Cells("VoidButton").Value = "Locked"
+                                        .Cells("VoidButton").ReadOnly = True
+                                        .Cells("VoidButton").Style.BackColor = Color.LightGray
+                                        .Cells("VoidButton").Style.ForeColor = Color.DimGray
                                     End If
                                 End If
                             End With
                         End If
                     Next
-
-                    If dgtDeliveryList.Rows.Count = 0 Then
-                        Console.WriteLine($"No receipts found for {selectedDate.ToShortDateString()}.")
-                    End If
-                Else
-                    Console.WriteLine("No receipt data found in the API response.")
                 End If
-            Else
-                ' 🟢 IMPROVED ERROR HANDLING 🟢
-                Dim errorDetails = Await response.Content.ReadAsStringAsync()
-                Dim errorMessage As String = $"API Error ({response.StatusCode}): Failed to fetch receipts report."
-
-                Try
-                    ' Try to parse the JSON error body from the server
-                    Dim errorJson As JObject = JObject.Parse(errorDetails)
-                    If errorJson IsNot Nothing AndAlso errorJson.ContainsKey("message") Then
-                        errorMessage = $"API Error ({response.StatusCode}): {errorJson("message").ToString()}"
-                    End If
-                Catch exJson As Exception
-                    ' If parsing fails, append the raw content for debugging
-                    errorMessage = $"{errorMessage}. Raw details: {errorDetails.Substring(0, Math.Min(errorDetails.Length, 150))}..."
-                End Try
-
-                MessageBox.Show(errorMessage, V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
             End If
-
-        Catch ex As HttpRequestException
-            MessageBox.Show("Connection Error: Could not reach the API server. Ensure the server is running at " & API_BASE_URL & ". 🔴", V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
         Catch ex As Exception
-            MessageBox.Show("Error processing API response or binding data: " & ex.Message, V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("Error loading data: " & ex.Message, V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Function
-
     ' ---------------------------------------------------------------------
     ' --- Cell Click Handler (Initiate Void and Popup Reason) ---
     ' ---------------------------------------------------------------------
+    'Private Async Sub dgtDeliveryList_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgtDeliveryList.CellContentClick
+    '    If e.RowIndex < 0 OrElse e.ColumnIndex < 0 Then Exit Sub
+
+    '    If dgtDeliveryList.Columns(e.ColumnIndex).Name = "VoidButton" Then
+    '        Dim row As DataGridViewRow = dgtDeliveryList.Rows(e.RowIndex)
+    '        Dim receiptNo As String = row.Cells("ReceiptNumber").Value.ToString()
+    '        Dim currentStatus As String = row.Cells("StatusInvoice").Value.ToString()
+
+    '        If currentStatus = "Voided" Then
+    '            MessageBox.Show("This receipt is already voided.", V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Information)
+    '            Exit Sub
+    '        End If
+
+    '        ' ⭐ FIX: Use the actual frm_void_reason form for input ⭐
+    '        ' NOTE: This assumes you have a form named frm_void_reason with a public property called VoidReason
+    '        Dim frmReason As New frm_void_reason()
+    '        frmReason.Text = $"Voiding Receipt: {receiptNo}"
+
+    '        If frmReason.ShowDialog() = DialogResult.OK Then
+
+    '            Dim voidReason As String = frmReason.VoidReason
+
+    '            ' Validate that the reason property was set (i.e., the user typed something)
+    '            If String.IsNullOrWhiteSpace(voidReason) Then
+    '                MessageBox.Show("Void reason cannot be empty. Please try again.", V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Warning)
+    '                frmReason.Dispose()
+    '                Exit Sub
+    '            End If
+
+    '            If MessageBox.Show($"Confirm void for receipt {receiptNo} with reason: {voidReason}?", V_ProjectName, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) = DialogResult.Yes Then
+
+    '                ' STEP 2: Pass the receipt number and the reason to the API
+    '                Await VoidSelectedReceipt(receiptNo, voidReason)
+    '            End If
+    '        End If
+
+    '        ' Clean up the form after use
+    '        frmReason.Dispose()
+    '    End If
+    'End Sub
     Private Async Sub dgtDeliveryList_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgtDeliveryList.CellContentClick
         If e.RowIndex < 0 OrElse e.ColumnIndex < 0 Then Exit Sub
 
         If dgtDeliveryList.Columns(e.ColumnIndex).Name = "VoidButton" Then
+
+            ' 1. Check permission again (Security Guard)
+            If Not UserSession.HasAction("/pos/btn-void", "update") Then
+                MessageBox.Show("Access Denied: You do not have 'Update' permission to void receipts.",
+                                V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Stop)
+                Exit Sub
+            End If
+
             Dim row As DataGridViewRow = dgtDeliveryList.Rows(e.RowIndex)
             Dim receiptNo As String = row.Cells("ReceiptNumber").Value.ToString()
             Dim currentStatus As String = row.Cells("StatusInvoice").Value.ToString()
@@ -243,44 +331,71 @@ Public Class frm_voide
                 Exit Sub
             End If
 
-            ' ⭐ FIX: Use the actual frm_void_reason form for input ⭐
-            ' NOTE: This assumes you have a form named frm_void_reason with a public property called VoidReason
             Dim frmReason As New frm_void_reason()
             frmReason.Text = $"Voiding Receipt: {receiptNo}"
 
             If frmReason.ShowDialog() = DialogResult.OK Then
-
                 Dim voidReason As String = frmReason.VoidReason
-
-                ' Validate that the reason property was set (i.e., the user typed something)
                 If String.IsNullOrWhiteSpace(voidReason) Then
-                    MessageBox.Show("Void reason cannot be empty. Please try again.", V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Warning)
-                    frmReason.Dispose()
+                    MessageBox.Show("Void reason cannot be empty.", V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Warning)
                     Exit Sub
                 End If
 
-                If MessageBox.Show($"Confirm void for receipt {receiptNo} with reason: {voidReason}?", V_ProjectName, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) = DialogResult.Yes Then
-
-                    ' STEP 2: Pass the receipt number and the reason to the API
+                If MessageBox.Show($"Confirm void for receipt {receiptNo}?", V_ProjectName, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) = DialogResult.Yes Then
                     Await VoidSelectedReceipt(receiptNo, voidReason)
                 End If
             End If
-
-            ' Clean up the form after use
             frmReason.Dispose()
         End If
     End Sub
-
     ''' <summary>
     ''' Calls the restricted API endpoint to void a transaction.
     ''' </summary>
     ''' <param name="receiptNo">The receipt number to void.</param>
     ''' <param name="voidReason">The user-provided reason for the void.</param>
+    'Private Async Function VoidSelectedReceipt(ByVal receiptNo As String, ByVal voidReason As String) As Task
+    '    Dim apiUrl As String = $"{API_BASE_URL}/api/pos/sales/{receiptNo}/void"
+
+    '    Dim requestBody As New JObject From {
+    '        {"void_user", main_pos_system.lblCasheri.Text},
+    '        {"void_reason", voidReason}
+    '    }
+
+    '    Dim jsonPayload As String = requestBody.ToString()
+
+    '    Try
+    '        Dim content As New StringContent(jsonPayload, System.Text.Encoding.UTF8, "application/json")
+    '        Dim response As HttpResponseMessage = Await httpClient.PutAsync(apiUrl, content)
+
+    '        Dim responseString As String = Await response.Content.ReadAsStringAsync()
+
+    '        If response.IsSuccessStatusCode Then
+    '            MessageBox.Show($"Receipt {receiptNo} successfully VOIDED by user {main_pos_system.lblCasheri.Text}. Data will now refresh.", V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Information)
+    '            ' Refresh the grid to show the updated status
+    '            Await LoadReceiptsData()
+    '        Else
+    '            Dim errorJson As JObject = JObject.Parse(responseString)
+    '            Dim errorMessage As String = errorJson("message").ToString()
+
+    '            If response.StatusCode = Net.HttpStatusCode.Forbidden Then
+    '                ' Handles the specific current-day restriction failure (HTTP 403)
+    '                MessageBox.Show($"VOID FAILED: {errorMessage}", V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
+    '            Else
+    '                MessageBox.Show($"API Void Failed ({response.StatusCode}): {errorMessage}", V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
+    '            End If
+    '        End If
+
+    '    Catch ex As HttpRequestException
+    '        MessageBox.Show("Connection Error: Could not reach the API server during void operation. 🔴", V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
+    '    Catch ex As Exception
+    '        MessageBox.Show("An unexpected error occurred during void processing: " & ex.Message, V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
+    '    End Try
+    'End Function
     Private Async Function VoidSelectedReceipt(ByVal receiptNo As String, ByVal voidReason As String) As Task
         Dim apiUrl As String = $"{API_BASE_URL}/api/pos/sales/{receiptNo}/void"
 
         Dim requestBody As New JObject From {
-            {"void_user", Me.VoidingUserName},
+            {"void_user", main_pos_system.lblCasheri.Text},
             {"void_reason", voidReason}
         }
 
@@ -289,11 +404,24 @@ Public Class frm_voide
         Try
             Dim content As New StringContent(jsonPayload, System.Text.Encoding.UTF8, "application/json")
             Dim response As HttpResponseMessage = Await httpClient.PutAsync(apiUrl, content)
-
             Dim responseString As String = Await response.Content.ReadAsStringAsync()
 
             If response.IsSuccessStatusCode Then
-                MessageBox.Show($"Receipt {receiptNo} successfully VOIDED by user {Me.VoidingUserName}. Data will now refresh.", V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Information)
+                ' --- PRINTING LOGIC START ---
+                ' 1. Fetch full transaction details (Details and Payments) needed for the receipt
+                Dim transactionData As JObject = Await FetchTransactionData(receiptNo)
+
+                If transactionData IsNot Nothing Then
+                    ' 2. Generate content with the VOID flag set to True
+                    Dim receiptContent As String = ReceiptPrinter.GenerateReceiptContentFromJObject(transactionData, isVoid:=True)
+
+                    ' 3. Execute the print
+                    ReceiptPrinter.ExecutePrint(receiptContent, receiptNo)
+                End If
+                ' --- PRINTING LOGIC END ---
+
+                MessageBox.Show($"Receipt {receiptNo} successfully VOIDED and printed.", V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Information)
+
                 ' Refresh the grid to show the updated status
                 Await LoadReceiptsData()
             Else
@@ -301,7 +429,6 @@ Public Class frm_voide
                 Dim errorMessage As String = errorJson("message").ToString()
 
                 If response.StatusCode = Net.HttpStatusCode.Forbidden Then
-                    ' Handles the specific current-day restriction failure (HTTP 403)
                     MessageBox.Show($"VOID FAILED: {errorMessage}", V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
                 Else
                     MessageBox.Show($"API Void Failed ({response.StatusCode}): {errorMessage}", V_ProjectName, MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -315,6 +442,22 @@ Public Class frm_voide
         End Try
     End Function
 
+    ''' <summary>
+    ''' Helper function to fetch the full transaction data (Header, Details, Payments) from the API.
+    ''' </summary>
+    Private Async Function FetchTransactionData(ByVal receiptNo As String) As Task(Of JObject)
+        Dim apiUrl As String = $"{API_BASE_URL}/api/pos/sales/{receiptNo.Trim()}"
+        Try
+            Dim response As HttpResponseMessage = Await httpClient.GetAsync(apiUrl)
+            If response.IsSuccessStatusCode Then
+                Dim jsonString As String = Await response.Content.ReadAsStringAsync()
+                Return JObject.Parse(jsonString)
+            End If
+        Catch ex As Exception
+            Console.WriteLine("Error fetching transaction for print: " & ex.Message)
+        End Try
+        Return Nothing
+    End Function
     ' ---------------------------------------------------------------------
     ' --- DateTimePicker Handler (Reload data on date change) ---
     ' ---------------------------------------------------------------------

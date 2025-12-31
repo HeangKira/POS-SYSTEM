@@ -34,7 +34,7 @@ Public Class frm_payment_chash
             End If
 
             ' 3. Get the main form's DataGridView
-            Dim paymentGrid As DataGridView = frm_pos_sell.dg_Payment
+            Dim paymentGrid As DataGridView = main_pos_system.dg_Payment
 
             ' 4. Add a new, empty row
             Dim newRowIndex As Integer = paymentGrid.Rows.Add()

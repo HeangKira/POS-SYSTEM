@@ -127,6 +127,9 @@
   <data name="Positron_Logo_White1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Positron_Logo_White1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Screenshot 2025-12-06 110420" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Screenshot 2025-12-06 110420.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="PositronLogo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\PositronLogo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -147,5 +150,8 @@
   </data>
   <data name="Positron_Logo_White2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Positron_Logo_White2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Ankorwat" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Ankorwat.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

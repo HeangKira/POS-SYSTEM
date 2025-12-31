@@ -1,64 +1,100 @@
 ﻿Imports Npgsql
 Imports System.Data
+Imports System.Net.Http ' ⭐ REQUIRED: For API calls
+Imports Newtonsoft.Json.Linq ' ⭐ REQUIRED: For JSON parsing
 
 Public Class frm_dl_list
 
     ' --- PROPERTIES TO RECEIVE DATA FROM frm_pos_sell ---
-    Public Property PaymentMethod As String = "Cash" ' e.g., "Cash", "Card", etc.
+    Public Property PaymentMethod As String = "Cash"
     Public Property CurrencyCode As String = "USD"
     Public Property ExchangeRate As Decimal = 1D
     Public Property IsBaseCurrency As Boolean = True
 
-    ' ⭐ NEW: Public Property to hold a reference to the calling form ⭐
-    Public Property ParentFormSell As frm_pos_sell
+    ' ⭐ Public Property to hold a reference to the calling form ⭐
+    'Public Property ParentFormSell As frm_pos_sell
+    Public Property ParentFormSell As main_pos_system ' Match your actual class name
 
-    ' CONNECTION STRING (Ensure Npgsql reference is added to your project)
-    Private Const CONNECTION_STRING As String = "Host=127.0.0.1;Port=5432;Username=postgres;Password=kira23;Database=POS-Database;"
+    ' --- API Configuration (Must match your Node.js server) ---
+    Private Const API_BASE_URL As String = "http://172.29.29.56:5005"
+    'Private Const API_BASE_URL As String = "http://localhost:5005"
+    Private ReadOnly httpClient As New HttpClient()
 
-    ' --- LOAD EVENT ---
-    Private Sub frm_dl_list_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+    ' REMOVED: Direct database CONNECTION_STRING
+
+    ' --- Data Structure for ComboBox Items ---
+    Public Class DeliveryItem
+        Public Property DeliveryId As String
+        Public Property DeliveryName As String
+
+        ' Overriding ToString is crucial for the ComboBox to display the Name
+        Public Overrides Function ToString() As String
+            Return DeliveryName
+        End Function
+    End Class
+
+    ' ----------------------------------------------------------------------
+    ' --- LOAD EVENT (REVISED TO USE API) ---
+    ' ----------------------------------------------------------------------
+    Private Async Sub frm_dl_list_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Try
             ' 1. Clear existing items
             cmbdelivery.Items.Clear()
 
             ' 2. **ADD THE "BLACK" PLACEHOLDER ITEM FIRST**
-            ' We assign an ID of 0 (or -1) to indicate it's not a real database record.
-            Dim blackItem As New DeliveryItem With {.DeliveryId = 0, .DeliveryName = ""}
+            Dim blackItem As New DeliveryItem With {.DeliveryId = "", .DeliveryName = "--- Select Delivery ---"}
             cmbdelivery.Items.Add(blackItem)
 
-            ' 3. Connect to the database and load actual records
-            Using conn As New NpgsqlConnection(CONNECTION_STRING)
-                conn.Open()
+            ' 3. Connect to the API and load actual records
+            Await LoadDeliveriesFromApi()
 
-                ' SQL must select both ID and Name
-                Dim sql As String = "SELECT delivery_id, delivery_name FROM public.tbl_delivery ORDER BY delivery_name;"
-
-                Using cmd As New NpgsqlCommand(sql, conn)
-                    Using reader As NpgsqlDataReader = cmd.ExecuteReader()
-                        While reader.Read()
-                            ' Create a new DeliveryItem object for each database record
-                            Dim dbItem As New DeliveryItem With {
-                                .DeliveryId = CInt(reader("delivery_id")),
-                                .DeliveryName = reader("delivery_name").ToString()
-                            }
-                            ' Add the custom object to the ComboBox
-                            cmbdelivery.Items.Add(dbItem)
-                        End While
-                    End Using
-                End Using
-            End Using
-
-            ' 4. Select the first item ("Black") by default
+            ' 4. Select the first item ("Black" placeholder) by default
             If cmbdelivery.Items.Count > 0 Then
                 cmbdelivery.SelectedIndex = 0
             End If
 
         Catch ex As Exception
-            MessageBox.Show("Error loading delivery names: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("Error loading delivery names: " & ex.Message, "System Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Sub
 
+    ''' <summary>
+    ''' Fetches delivery records from the API via the /api/deliveries endpoint.
+    ''' </summary>
+    Private Async Function LoadDeliveriesFromApi() As Task
+        Dim apiUrl As String = $"{API_BASE_URL}/api/deliveries"
+
+        Try
+            Dim response As HttpResponseMessage = Await httpClient.GetAsync(apiUrl)
+
+            If response.IsSuccessStatusCode Then
+                Dim jsonString As String = Await response.Content.ReadAsStringAsync()
+                Dim deliveryDataList As JArray = JArray.Parse(jsonString)
+
+                For Each itemData As JObject In deliveryDataList
+                    ' The API fields are delivery_id (integer) and delivery_name (string)
+                    Dim dbItem As New DeliveryItem With {
+                        .DeliveryId = itemData("delivery_id").ToString(),
+                        .DeliveryName = itemData("delivery_name").ToString()
+                    }
+                    ' Add the custom object to the ComboBox
+                    cmbdelivery.Items.Add(dbItem)
+                Next
+            Else
+                Dim errorDetails = Await response.Content.ReadAsStringAsync()
+                MessageBox.Show($"API Error: {response.StatusCode}. Failed to fetch deliveries. Details: {errorDetails}", "API Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End If
+
+        Catch ex As HttpRequestException
+            MessageBox.Show("Connection Error: Could not reach the API server to fetch deliveries. Ensure the server is running at " & API_BASE_URL & ". 🔴", "Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Catch ex As Exception
+            MessageBox.Show("Error processing API response: " & ex.Message, "System Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
+    End Function
+
+    ' ----------------------------------------------------------------------
     ' --- SELECTED INDEX CHANGED EVENT ---
+    ' ----------------------------------------------------------------------
     Private Sub ComboBox1_SelectedIndexChanged(sender As Object, e As EventArgs)
         ' Check if an item is actually selected
         If cmbdelivery.SelectedItem IsNot Nothing Then
@@ -85,14 +121,15 @@ Public Class frm_dl_list
 
     End Sub
 
-    ' ⭐ NEW: Handle Confirmation and Data Transfer to Parent Form ⭐
+    ' ⭐ Handle Confirmation and Data Transfer to Parent Form ⭐
     Private Sub btnConfirm_Click(sender As Object, e As EventArgs) Handles btnConfrim.Click ' ⭐ ENSURE your button is named 'btnConfirm'
         If cmbdelivery.SelectedItem IsNot Nothing AndAlso ParentFormSell IsNot Nothing Then
             Dim selectedItem As DeliveryItem = TryCast(cmbdelivery.SelectedItem, DeliveryItem)
 
-            If selectedItem IsNot Nothing AndAlso selectedItem.DeliveryId > 0 Then
+            ' CHANGE: Check if ID is not empty. Do NOT use "> 0"
+            If selectedItem IsNot Nothing AndAlso Not String.IsNullOrEmpty(selectedItem.DeliveryId) Then
 
-                ' 1. Load the delivery name into lblDelivery and set the ID in frm_pos_sell
+                ' Pass the string "DL02" to main form
                 ParentFormSell.SetDeliveryInfo(selectedItem.DeliveryId, selectedItem.DeliveryName)
 
                 Me.DialogResult = DialogResult.OK
@@ -124,13 +161,13 @@ Public Class frm_dl_list
             End If
 
             ' 3. Get the main form's DataGridView
-            Dim paymentGrid As DataGridView = frm_pos_sell.dg_Payment
+            Dim paymentGrid As DataGridView = main_pos_system.dg_Payment
 
             ' 4. Add a new, empty row
             Dim newRowIndex As Integer = paymentGrid.Rows.Add()
             Dim newRow As DataGridViewRow = paymentGrid.Rows(newRowIndex)
 
-            ' 5. Set values: 
+            ' 5. Set values: 
             ' Set the combined display string (e.g., "Cash (KHR)", "Cash (USD)")
             displayMethod = Me.PaymentMethod & " (" & Me.CurrencyCode & ")"
             newRow.Cells("PAY_METHOD").Value = displayMethod
@@ -170,4 +207,5 @@ Public Class frm_dl_list
     Private Sub btnClose_Click(sender As Object, e As EventArgs) Handles btnClose.Click
         Me.Close()
     End Sub
+
 End Class

@@ -22,7 +22,7 @@ Partial Class frm_voide
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle2 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Me.Panel_TitleBar = New System.Windows.Forms.Panel()
         Me.btn_Maximize = New FontAwesome.Sharp.IconButton()
         Me.btn_Minimize = New FontAwesome.Sharp.IconButton()
@@ -47,15 +47,16 @@ Partial Class frm_voide
         '
         'Panel_TitleBar
         '
+        Me.Panel_TitleBar.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Panel_TitleBar.BackColor = System.Drawing.Color.FromArgb(CType(CType(15, Byte), Integer), CType(CType(24, Byte), Integer), CType(CType(27, Byte), Integer))
         Me.Panel_TitleBar.Controls.Add(Me.btn_Maximize)
         Me.Panel_TitleBar.Controls.Add(Me.btn_Minimize)
         Me.Panel_TitleBar.Controls.Add(Me.btn_Exit)
         Me.Panel_TitleBar.Controls.Add(Me.Label4)
-        Me.Panel_TitleBar.Dock = System.Windows.Forms.DockStyle.Top
-        Me.Panel_TitleBar.Location = New System.Drawing.Point(0, 0)
+        Me.Panel_TitleBar.Location = New System.Drawing.Point(1, 2)
         Me.Panel_TitleBar.Name = "Panel_TitleBar"
-        Me.Panel_TitleBar.Size = New System.Drawing.Size(682, 41)
+        Me.Panel_TitleBar.Size = New System.Drawing.Size(813, 38)
         Me.Panel_TitleBar.TabIndex = 13
         '
         'btn_Maximize
@@ -69,7 +70,7 @@ Partial Class frm_voide
         Me.btn_Maximize.IconColor = System.Drawing.SystemColors.Window
         Me.btn_Maximize.IconFont = FontAwesome.Sharp.IconFont.[Auto]
         Me.btn_Maximize.IconSize = 27
-        Me.btn_Maximize.Location = New System.Drawing.Point(608, 4)
+        Me.btn_Maximize.Location = New System.Drawing.Point(740, 4)
         Me.btn_Maximize.Name = "btn_Maximize"
         Me.btn_Maximize.Size = New System.Drawing.Size(30, 30)
         Me.btn_Maximize.TabIndex = 28
@@ -88,7 +89,7 @@ Partial Class frm_voide
         Me.btn_Minimize.IconFont = FontAwesome.Sharp.IconFont.[Auto]
         Me.btn_Minimize.IconSize = 27
         Me.btn_Minimize.ImageAlign = System.Drawing.ContentAlignment.BottomCenter
-        Me.btn_Minimize.Location = New System.Drawing.Point(571, 4)
+        Me.btn_Minimize.Location = New System.Drawing.Point(702, 4)
         Me.btn_Minimize.Name = "btn_Minimize"
         Me.btn_Minimize.Size = New System.Drawing.Size(30, 30)
         Me.btn_Minimize.TabIndex = 27
@@ -106,7 +107,7 @@ Partial Class frm_voide
         Me.btn_Exit.IconColor = System.Drawing.SystemColors.Window
         Me.btn_Exit.IconFont = FontAwesome.Sharp.IconFont.[Auto]
         Me.btn_Exit.IconSize = 27
-        Me.btn_Exit.Location = New System.Drawing.Point(644, 4)
+        Me.btn_Exit.Location = New System.Drawing.Point(776, 4)
         Me.btn_Exit.Name = "btn_Exit"
         Me.btn_Exit.Size = New System.Drawing.Size(30, 30)
         Me.btn_Exit.TabIndex = 22
@@ -126,6 +127,8 @@ Partial Class frm_voide
         '
         'Panel1
         '
+        Me.Panel1.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Panel1.BackColor = System.Drawing.Color.FromArgb(CType(CType(54, Byte), Integer), CType(CType(48, Byte), Integer), CType(CType(54, Byte), Integer))
         Me.Panel1.Controls.Add(Me.Label1)
         Me.Panel1.Controls.Add(Me.dtpVoidDate)
@@ -134,16 +137,16 @@ Partial Class frm_voide
         Me.Panel1.Controls.Add(Me.cmbFilter)
         Me.Panel1.Controls.Add(Me.lblInvoice)
         Me.Panel1.Controls.Add(Me.txtInvoiceNumber)
-        Me.Panel1.Location = New System.Drawing.Point(0, 41)
+        Me.Panel1.Location = New System.Drawing.Point(1, 41)
         Me.Panel1.Name = "Panel1"
-        Me.Panel1.Size = New System.Drawing.Size(683, 50)
+        Me.Panel1.Size = New System.Drawing.Size(813, 50)
         Me.Panel1.TabIndex = 14
         '
         'Label1
         '
         Me.Label1.AutoSize = True
         Me.Label1.ForeColor = System.Drawing.Color.White
-        Me.Label1.Location = New System.Drawing.Point(500, 15)
+        Me.Label1.Location = New System.Drawing.Point(579, 15)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(60, 13)
         Me.Label1.TabIndex = 182
@@ -152,7 +155,7 @@ Partial Class frm_voide
         'dtpVoidDate
         '
         Me.dtpVoidDate.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
-        Me.dtpVoidDate.Location = New System.Drawing.Point(566, 11)
+        Me.dtpVoidDate.Location = New System.Drawing.Point(652, 11)
         Me.dtpVoidDate.Name = "dtpVoidDate"
         Me.dtpVoidDate.Size = New System.Drawing.Size(112, 20)
         Me.dtpVoidDate.TabIndex = 181
@@ -179,7 +182,7 @@ Partial Class frm_voide
         '
         Me.Label2.AutoSize = True
         Me.Label2.ForeColor = System.Drawing.Color.White
-        Me.Label2.Location = New System.Drawing.Point(288, 15)
+        Me.Label2.Location = New System.Drawing.Point(314, 17)
         Me.Label2.Name = "Label2"
         Me.Label2.Size = New System.Drawing.Size(50, 13)
         Me.Label2.TabIndex = 3
@@ -189,7 +192,7 @@ Partial Class frm_voide
         '
         Me.cmbFilter.FormattingEnabled = True
         Me.cmbFilter.Items.AddRange(New Object() {"", "Cashier"})
-        Me.cmbFilter.Location = New System.Drawing.Point(342, 11)
+        Me.cmbFilter.Location = New System.Drawing.Point(382, 12)
         Me.cmbFilter.Name = "cmbFilter"
         Me.cmbFilter.Size = New System.Drawing.Size(116, 21)
         Me.cmbFilter.TabIndex = 2
@@ -198,7 +201,7 @@ Partial Class frm_voide
         '
         Me.lblInvoice.AutoSize = True
         Me.lblInvoice.ForeColor = System.Drawing.Color.White
-        Me.lblInvoice.Location = New System.Drawing.Point(11, 15)
+        Me.lblInvoice.Location = New System.Drawing.Point(4, 15)
         Me.lblInvoice.Name = "lblInvoice"
         Me.lblInvoice.Size = New System.Drawing.Size(92, 13)
         Me.lblInvoice.TabIndex = 1
@@ -206,35 +209,41 @@ Partial Class frm_voide
         '
         'txtInvoiceNumber
         '
-        Me.txtInvoiceNumber.Location = New System.Drawing.Point(107, 12)
+        Me.txtInvoiceNumber.Location = New System.Drawing.Point(120, 12)
         Me.txtInvoiceNumber.Name = "txtInvoiceNumber"
         Me.txtInvoiceNumber.Size = New System.Drawing.Size(164, 20)
         Me.txtInvoiceNumber.TabIndex = 0
         '
         'dgtDeliveryList
         '
+        Me.dgtDeliveryList.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.dgtDeliveryList.BackgroundColor = System.Drawing.Color.White
-        DataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle1.BackColor = System.Drawing.Color.White
-        DataGridViewCellStyle1.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold)
-        DataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText
-        DataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight
-        DataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText
-        DataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.dgtDeliveryList.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
+        DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle2.BackColor = System.Drawing.Color.White
+        DataGridViewCellStyle2.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold)
+        DataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText
+        DataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.dgtDeliveryList.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle2
         Me.dgtDeliveryList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.dgtDeliveryList.Location = New System.Drawing.Point(0, 93)
+        Me.dgtDeliveryList.Location = New System.Drawing.Point(1, 92)
         Me.dgtDeliveryList.Name = "dgtDeliveryList"
-        Me.dgtDeliveryList.Size = New System.Drawing.Size(682, 191)
+        Me.dgtDeliveryList.RowHeadersWidth = 51
+        Me.dgtDeliveryList.Size = New System.Drawing.Size(813, 313)
         Me.dgtDeliveryList.TabIndex = 15
         '
         'Panel2
         '
+        Me.Panel2.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Panel2.BackColor = System.Drawing.Color.FromArgb(CType(CType(187, Byte), Integer), CType(CType(129, Byte), Integer), CType(CType(91, Byte), Integer))
         Me.Panel2.Controls.Add(Me.btnClose)
-        Me.Panel2.Location = New System.Drawing.Point(0, 286)
+        Me.Panel2.Location = New System.Drawing.Point(1, 404)
         Me.Panel2.Name = "Panel2"
-        Me.Panel2.Size = New System.Drawing.Size(682, 47)
+        Me.Panel2.Size = New System.Drawing.Size(813, 70)
         Me.Panel2.TabIndex = 16
         '
         'btnClose
@@ -242,7 +251,7 @@ Partial Class frm_voide
         Me.btnClose.Font = New System.Drawing.Font("Microsoft Tai Le", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.btnClose.Location = New System.Drawing.Point(9, 7)
         Me.btnClose.Name = "btnClose"
-        Me.btnClose.Size = New System.Drawing.Size(89, 31)
+        Me.btnClose.Size = New System.Drawing.Size(119, 51)
         Me.btnClose.TabIndex = 1
         Me.btnClose.Text = "Close"
         Me.btnClose.UseVisualStyleBackColor = True
@@ -251,11 +260,12 @@ Partial Class frm_voide
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(682, 333)
+        Me.ClientSize = New System.Drawing.Size(816, 474)
         Me.Controls.Add(Me.Panel2)
         Me.Controls.Add(Me.dgtDeliveryList)
         Me.Controls.Add(Me.Panel1)
         Me.Controls.Add(Me.Panel_TitleBar)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.Name = "frm_voide"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "frm_voide"
